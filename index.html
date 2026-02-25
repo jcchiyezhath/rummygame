@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Rummy Points Tracker</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --fg:#111111;
+      --muted:#666;
+      --card:#f7f7f7;
+      --border:#e2e2e2;
+      --accent:#2f6fed;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --danger:#d11;
+      --ok:#198754;
+    }
+    body.dark{
+      --bg:#0f1115;
+      --fg:#f2f2f2;
+      --muted:#a7a7a7;
+      --card:#171a21;
+      --border:#2a2f3a;
+      --accent:#6aa6ff;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--fg);
+    }
+    .topbar{ height:8px; background:#0b7a78; }
+    .wrap{ max-width:1200px; margin:0 auto; padding:18px 14px 40px; }
+    h1{ margin:10px 0 14px; text-align:center; font-size:38px; letter-spacing:.4px; }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--bg);
+      color:var(--fg);
+      cursor:pointer;
+      font-size:14px;
+    }
+    .btn.primary{ background:var(--accent); color:#fff; border-color:transparent; }
+    .btn.danger{ background:var(--danger); color:#fff; border-color:transparent; }
+    .btn.small{ padding:7px 10px; font-size:13px; border-radius:10px; }
+    .muted{ color:var(--muted); font-size:13px; }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:var(--bg);
+    }
+    th, td{
+      border-bottom:1px solid var(--border);
+      border-right:1px solid var(--border);
+      padding:10px 8px;
+      font-size:14px;
+      vertical-align:middle;
+    }
+    th:last-child, td:last-child{ border-right:none; }
+    tr:last-child td{ border-bottom:none; }
+    th{
+      background: linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,0));
+      text-align:left;
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
+    input[type="text"], input[type="number"], select{
+      width:100%;
+      padding:9px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:var(--bg);
+      color:var(--fg);
+      outline:none;
+      font-size:14px;
+    }
+    input[type="number"]{ text-align:right; }
+    .scoreCell{
+      display:grid;
+      grid-template-columns: 1fr 90px;
+      gap:8px;
+      align-items:center;
+    }
+    .totalCell{
+      font-weight:700;
+      text-align:right;
+      min-width:80px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:var(--bg);
+    }
+    .rankBox{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+    .rankRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:var(--bg);
+    }
+    .rankLabel{ color:var(--muted); font-size:13px; }
+    .rankName{ font-weight:700; }
+    .rulesTable td{ padding:8px 8px; }
+    .rightTop{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .hint{ margin-top:10px; font-size:13px; color:var(--muted); }
+    .error{ margin-top:10px; color:var(--danger); font-size:13px; }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      h1{ font-size:32px; }
+      .scoreCell{ grid-template-columns: 1fr 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar"></div>
+  <div class="wrap">
+    <h1>Rummy Points Tracker</h1>
+
+    <div class="panel" style="margin-bottom:14px;">
+      <div class="row">
+        <div class="pill">
+          <div class="muted">mode</div>
+          <button class="btn small" id="darkBtn">dark mode</button>
+        </div>
+
+        <div class="pill">
+          <div class="muted">rounds</div>
+          <select id="roundCount" style="width:auto; min-width:90px;">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" selected>5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+          </select>
+          <button class="btn small" id="applyRoundsBtn">apply</button>
+        </div>
+
+        <div class="pill">
+          <button class="btn small primary" id="saveBtn">save</button>
+          <button class="btn small" id="loadBtn">load</button>
+          <button class="btn small danger" id="resetBtn">reset</button>
+        </div>
+      </div>
+      <div class="hint">Tip: choose an action for each round; points auto-fill. You can also type points directly.</div>
+      <div id="err" class="error"></div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="row" style="margin-bottom:10px;">
+          <div>
+            <div style="font-weight:700; margin-bottom:4px;">Game Chart</div>
+            <div class="muted">Lowest total points wins (rummy style)</div>
+          </div>
+          <div class="row">
+            <button class="btn small" id="addPlayerBtn">+ add player</button>
+          </div>
+        </div>
+
+        <div style="overflow:auto; max-height:70vh;">
+          <table id="scoreTable"></table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="rightTop">
+          <div>
+            <div style="font-weight:700; margin-bottom:4px;">Actions / Points</div>
+            <div class="muted">Edit these if your rules change</div>
+          </div>
+          <button class="btn small" id="addRuleBtn">+ add rule</button>
+        </div>
+
+        <div style="margin-top:10px; overflow:auto;">
+          <table class="rulesTable" id="rulesTable"></table>
+        </div>
+
+        <div class="rankBox">
+          <div style="font-weight:700;">Leaderboard</div>
+          <div class="rankRow">
+            <div>
+              <div class="rankLabel">1st place</div>
+              <div class="rankName" id="rank1">—</div>
+            </div>
+            <div class="muted" id="rank1pts">—</div>
+          </div>
+          <div class="rankRow">
+            <div>
+              <div class="rankLabel">2nd place</div>
+              <div class="rankName" id="rank2">—</div>
+            </div>
+            <div class="muted" id="rank2pts">—</div>
+          </div>
+          <div class="rankRow">
+            <div>
+              <div class="rankLabel">3rd place</div>
+              <div class="rankName" id="rank3">—</div>
+            </div>
+            <div class="muted" id="rank3pts">—</div>
+          </div>
+        </div>
+
+        <div class="hint">
+          If someone has 0 rounds filled, they’ll still show with 0 total.
+          If you want “blank totals ignored,” tell me and I’ll tweak it.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "rummy_points_tracker_v1";
+
+    const err = document.getElementById("err");
+    const darkBtn = document.getElementById("darkBtn");
+    const addPlayerBtn = document.getElementById("addPlayerBtn");
+    const scoreTable = document.getElementById("scoreTable");
+
+    const rulesTable = document.getElementById("rulesTable");
+    const addRuleBtn = document.getElementById("addRuleBtn");
+
+    const rank1 = document.getElementById("rank1");
+    const rank2 = document.getElementById("rank2");
+    const rank3 = document.getElementById("rank3");
+    const rank1pts = document.getElementById("rank1pts");
+    const rank2pts = document.getElementById("rank2pts");
+    const rank3pts = document.getElementById("rank3pts");
+
+    const roundCountSelect = document.getElementById("roundCount");
+    const applyRoundsBtn = document.getElementById("applyRoundsBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const loadBtn = document.getElementById("loadBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    let roundCount = 5;
+
+    // default data (like your screenshot)
+    let rules = [
+      { action: "Pure Sequence Missing", points: 80 },
+      { action: "Unmatched High Cards", points: 20 },
+      { action: "Unmatched Number Cards", points: 12 },
+      { action: "First Drop", points: 20 },
+      { action: "Middle Drop", points: 40 },
+    ];
+
+    let players = [
+      { name: "Alex", rounds: Array(roundCount).fill(null) },
+      { name: "Jacob", rounds: Array(roundCount).fill(null) },
+      { name: "Chacko", rounds: Array(roundCount).fill(null) },
+      { name: "Jeevan", rounds: Array(roundCount).fill(null) },
+      { name: "Janice", rounds: Array(roundCount).fill(null) },
+    ];
+
+    function setError(msg){ err.textContent = msg || ""; }
+
+    function ensureRoundLengths(){
+      players.forEach(p => {
+        if (!Array.isArray(p.rounds)) p.rounds = [];
+        if (p.rounds.length < roundCount){
+          p.rounds = p.rounds.concat(Array(roundCount - p.rounds.length).fill(null));
+        } else if (p.rounds.length > roundCount){
+          p.rounds = p.rounds.slice(0, roundCount);
+        }
+      });
+    }
+
+    function computeTotal(p){
+      let total = 0;
+      for (let i=0; i<roundCount; i++){
+        const v = p.rounds[i];
+        if (v === null || v === "" || Number.isNaN(Number(v))) continue;
+        total += Number(v);
+      }
+      return total;
+    }
+
+    function buildRulesDropdownOptions(){
+      // include a blank option
+      const opts = [`<option value="">(choose action)</option>`]
+        .concat(rules.map((r, idx) => `<option value="${idx}">${escapeHtml(r.action)} (${r.points})</option>`));
+      return opts.join("");
+    }
+
+    function renderRulesTable(){
+      const head = `
+        <tr>
+          <th style="width:70%;">Action</th>
+          <th style="width:20%;">Points</th>
+          <th style="width:10%;"> </th>
+        </tr>
+      `;
+      const rows = rules.map((r, i) => `
+        <tr>
+          <td><input type="text" value="${escapeAttr(r.action)}" data-rule-action="${i}" /></td>
+          <td><input type="number" value="${Number(r.points) || 0}" data-rule-points="${i}" /></td>
+          <td><button class="btn small danger" data-del-rule="${i}">x</button></td>
+        </tr>
+      `).join("");
+
+      rulesTable.innerHTML = head + rows;
+
+      // attach events
+      rulesTable.querySelectorAll("[data-rule-action]").forEach(inp => {
+        inp.addEventListener("input", () => {
+          const i = Number(inp.getAttribute("data-rule-action"));
+          rules[i].action = inp.value;
+          renderScoreTable(); // refresh dropdown text
+        });
+      });
+
+      rulesTable.querySelectorAll("[data-rule-points]").forEach(inp => {
+        inp.addEventListener("input", () => {
+          const i = Number(inp.getAttribute("data-rule-points"));
+          rules[i].points = Number(inp.value || 0);
+          renderScoreTable(); // refresh dropdown text
+        });
+      });
+
+      rulesTable.querySelectorAll("[data-del-rule]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const i = Number(btn.getAttribute("data-del-rule"));
+          rules.splice(i, 1);
+          renderRulesTable();
+          renderScoreTable();
+        });
+      });
+    }
+
+    function renderScoreTable(){
+      ensureRoundLengths();
+      const headRounds = Array.from({length: roundCount}, (_,i) => `<th>Round ${i+1}</th>`).join("");
+      const head = `
+        <tr>
+          <th style="min-width:170px;">Player Name</th>
+          ${headRounds}
+          <th style="min-width:110px;">Total Points</th>
+          <th style="min-width:80px;"> </th>
+        </tr>
+      `;
+
+      const optionsHtml = buildRulesDropdownOptions();
+
+      const rows = players.map((p, pi) => {
+        const roundCells = Array.from({length: roundCount}, (_,ri) => {
+          const val = p.rounds[ri];
+          const numVal = (val === null || val === "") ? "" : String(val);
+
+          return `
+            <td style="min-width:220px;">
+              <div class="scoreCell">
+                <select data-action="${pi}-${ri}">
+                  ${optionsHtml}
+                </select>
+                <input type="number" data-points="${pi}-${ri}" value="${escapeAttr(numVal)}" placeholder="0" />
+              </div>
+            </td>
+          `;
+        }).join("");
+
+        const total = computeTotal(p);
+
+        return `
+          <tr>
+            <td><input type="text" value="${escapeAttr(p.name)}" data-player="${pi}" /></td>
+            ${roundCells}
+            <td class="totalCell">${total}</td>
+            <td><button class="btn small danger" data-del-player="${pi}">x</button></td>
+          </tr>
+        `;
+      }).join("");
+
+      scoreTable.innerHTML = head + rows;
+
+      // player name edit
+      scoreTable.querySelectorAll("[data-player]").forEach(inp => {
+        inp.addEventListener("input", () => {
+          const pi = Number(inp.getAttribute("data-player"));
+          players[pi].name = inp.value;
+          updateLeaderboard();
+        });
+      });
+
+      // delete player
+      scoreTable.querySelectorAll("[data-del-player]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const pi = Number(btn.getAttribute("data-del-player"));
+          players.splice(pi,1);
+          renderScoreTable();
+          updateLeaderboard();
+        });
+      });
+
+      // dropdown + points logic
+      scoreTable.querySelectorAll("[data-action]").forEach(sel => {
+        const key = sel.getAttribute("data-action"); // "pi-ri"
+        const [pi, ri] = key.split("-").map(Number);
+
+        // try to auto-select based on matching points (best effort)
+        // (we store only points in rounds for simplicity)
+        sel.value = "";
+
+        sel.addEventListener("change", () => {
+          const idx = sel.value === "" ? null : Number(sel.value);
+          const pointsInput = scoreTable.querySelector(`[data-points="${pi}-${ri}"]`);
+          if (idx === null || Number.isNaN(idx) || !rules[idx]){
+            pointsInput.value = "";
+            players[pi].rounds[ri] = null;
+          } else {
+            pointsInput.value = String(rules[idx].points);
+            players[pi].rounds[ri] = Number(rules[idx].points);
+          }
+          renderScoreTable();
+          updateLeaderboard();
+        });
+      });
+
+      scoreTable.querySelectorAll("[data-points]").forEach(inp => {
+        const key = inp.getAttribute("data-points");
+        const [pi, ri] = key.split("-").map(Number);
+
+        inp.addEventListener("input", () => {
+          const v = inp.value;
+          players[pi].rounds[ri] = (v === "" ? null : Number(v));
+          // we don’t force the dropdown selection here (keeps it simple)
+          renderScoreTable();
+          updateLeaderboard();
+        });
+      });
+
+      updateLeaderboard();
+    }
+
+    function updateLeaderboard(){
+      const list = players.map(p => ({ name: p.name || "—", total: computeTotal(p) }));
+      // lowest total wins
+      list.sort((a,b) => a.total - b.total);
+
+      rank1.textContent = list[0] ? list[0].name : "—";
+      rank1pts.textContent = list[0] ? String(list[0].total) : "—";
+
+      rank2.textContent = list[1] ? list[1].name : "—";
+      rank2pts.textContent = list[1] ? String(list[1].total) : "—";
+
+      rank3.textContent = list[2] ? list[2].name : "—";
+      rank3pts.textContent = list[2] ? String(list[2].total) : "—";
+    }
+
+    function addPlayer(){
+      players.push({ name: "New Player", rounds: Array(roundCount).fill(null) });
+      renderScoreTable();
+      updateLeaderboard();
+    }
+
+    function addRule(){
+      rules.push({ action: "New Rule", points: 0 });
+      renderRulesTable();
+      renderScoreTable();
+    }
+
+    function save(){
+      try{
+        const payload = { roundCount, rules, players };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        setError("saved.");
+        setTimeout(() => setError(""), 900);
+      }catch(e){
+        setError("save failed: " + e.message);
+      }
+    }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw){ setError("nothing saved yet."); return; }
+        const payload = JSON.parse(raw);
+        if (payload.roundCount) roundCount = Number(payload.roundCount) || 5;
+        if (Array.isArray(payload.rules)) rules = payload.rules;
+        if (Array.isArray(payload.players)) players = payload.players;
+
+        roundCountSelect.value = String(roundCount);
+        ensureRoundLengths();
+        renderRulesTable();
+        renderScoreTable();
+        setError("loaded.");
+        setTimeout(() => setError(""), 900);
+      }catch(e){
+        setError("load failed: " + e.message);
+      }
+    }
+
+    function resetAll(){
+      localStorage.removeItem(STORAGE_KEY);
+      roundCount = 5;
+      roundCountSelect.value = "5";
+      rules = [
+        { action: "Pure Sequence Missing", points: 80 },
+        { action: "Unmatched High Cards", points: 20 },
+        { action: "Unmatched Number Cards", points: 12 },
+        { action: "First Drop", points: 20 },
+        { action: "Middle Drop", points: 40 },
+      ];
+      players = [
+        { name: "Alex", rounds: Array(roundCount).fill(null) },
+        { name: "Jacob", rounds: Array(roundCount).fill(null) },
+        { name: "Chacko", rounds: Array(roundCount).fill(null) },
+        { name: "Jeevan", rounds: Array(roundCount).fill(null) },
+        { name: "Janice", rounds: Array(roundCount).fill(null) },
+      ];
+      renderRulesTable();
+      renderScoreTable();
+      setError("reset done.");
+      setTimeout(() => setError(""), 900);
+    }
+
+    function escapeHtml(str){
+      return String(str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+    function escapeAttr(str){
+      return escapeHtml(str).replaceAll("\n"," ");
+    }
+
+    // events
+    darkBtn.addEventListener("click", () => document.body.classList.toggle("dark"));
+    addPlayerBtn.addEventListener("click", addPlayer);
+    addRuleBtn.addEventListener("click", addRule);
+
+    applyRoundsBtn.addEventListener("click", () => {
+      const n = Number(roundCountSelect.value) || 5;
+      roundCount = n;
+      ensureRoundLengths();
+      renderScoreTable();
+      updateLeaderboard();
+    });
+
+    saveBtn.addEventListener("click", save);
+    loadBtn.addEventListener("click", load);
+    resetBtn.addEventListener("click", resetAll);
+
+    // init
+    roundCountSelect.value = String(roundCount);
+    renderRulesTable();
+    renderScoreTable();
+  </script>
+</body>
+</html>
