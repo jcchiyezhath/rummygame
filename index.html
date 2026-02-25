@@ -241,6 +241,7 @@
       <div class="smallRow">
         <button class="primary" id="addPlayerBtn">+ Add Player</button>
         <button class="secondary" id="addRoundBtn">+ Add Round</button>
+        <button class="secondary" onclick="exportPDF()">Export PDF</button>
         <button class="danger" id="resetBtn">Reset All</button>
       </div>
       <div class="muted" style="margin-top:10px;">
@@ -498,6 +499,15 @@
   document.getElementById("addPlayerBtn").addEventListener("click", addPlayer);
   document.getElementById("addRoundBtn").addEventListener("click", addRound);
   document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+  function exportPDF(){
+  window.print();
+}
+
+// ====== INIT ======
+loadState();
+normalize();
+render();
 
   // ====== INIT ======
   // Load saved data first. If none exists, start empty.
