@@ -22,6 +22,15 @@ h1{
   padding:15px;
 }
 
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+}
+@media(max-width:900px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
 .panel{
   background:#fff;
   padding:15px;
@@ -30,7 +39,83 @@ h1{
   margin-bottom:20px;
 }
 
-/* ===== TABLE ===== */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#eef3ff;
+  color:#1f4ed8;
+  font-weight:700;
+  font-size:14px;
+}
+
+.muted{
+  color:#666;
+  font-size:13px;
+}
+
+.kpi{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.kpiCard{
+  background:#f7f8fc;
+  border:1px solid #e5e7f2;
+  padding:12px;
+  border-radius:12px;
+  min-width: 180px;
+}
+.kpiCard .label{
+  font-size:12px;
+  color:#666;
+  margin-bottom:6px;
+}
+.kpiCard .value{
+  font-size:18px;
+  font-weight:800;
+}
+
+.leaderList{
+  margin:10px 0 0;
+  padding:0;
+  list-style:none;
+}
+.leaderItem{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid #e5e7f2;
+  border-radius:12px;
+  margin-top:8px;
+  background:#fff;
+}
+.leaderItem.win{
+  border-color:#2f6fed;
+  background:#eef3ff;
+}
+.rank{
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  background:#f0f2f7;
+}
+.leaderLeft{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.points{
+  font-weight:800;
+}
 
 .tableWrap{
   width:100%;
@@ -57,19 +142,20 @@ th{
   z-index:2;
 }
 
-input, select{
+input{
   padding:6px 8px;
   border-radius:8px;
   border:1px solid #ccc;
   font-size:14px;
+  width: 90px;
 }
 
 button{
-  padding:6px 10px;
-  border-radius:8px;
+  padding:8px 12px;
+  border-radius:10px;
   border:none;
   cursor:pointer;
-  font-weight:600;
+  font-weight:700;
 }
 
 .primary{
@@ -77,12 +163,14 @@ button{
   color:#fff;
 }
 
+.secondary{
+  background:#eef0f6;
+}
+
 .danger{
   background:#d11;
   color:#fff;
 }
-
-/* ===== RULES TABLE FIX ===== */
 
 .rulesWrap{
   width:100%;
@@ -110,8 +198,11 @@ button{
   z-index:1;
 }
 
-@media(max-width:768px){
-  table{min-width:800px;}
+.smallRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -121,22 +212,45 @@ button{
 
 <h1>Rummy Points Tracker</h1>
 
+<div class="grid">
+  <div class="panel">
+    <div class="badge" id="winnerBadge">Winner: —</div>
+    <div class="muted" id="winnerHint" style="margin-top:8px;">Lowest total points is winning.</div>
+
+    <div class="kpi">
+      <div class="kpiCard">
+        <div class="label">Current leader</div>
+        <div class="value" id="kpiLeader">—</div>
+      </div>
+      <div class="kpiCard">
+        <div class="label">Leader points</div>
+        <div class="value" id="kpiLeaderPts">—</div>
+      </div>
+      <div class="kpiCard">
+        <div class="label">Players</div>
+        <div class="value" id="kpiPlayers">0</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px; font-weight:800;">Leaderboard (lowest points wins)</div>
+    <ul class="leaderList" id="leaderList"></ul>
+  </div>
+
+  <div class="panel">
+    <div style="font-weight:800;">Quick actions</div>
+    <div class="muted" style="margin-top:6px;">Add players and enter round points. Leaderboard updates automatically.</div>
+    <div class="smallRow">
+      <button class="primary" onclick="addPlayer()">+ Add Player</button>
+      <button class="secondary" onclick="addRound()">+ Add Round</button>
+      <button class="danger" onclick="resetAll()">Reset All</button>
+    </div>
+  </div>
+</div>
+
 <div class="panel">
   <div class="tableWrap">
-    <table id="scoreTable">
-      <tr>
-        <th>Player</th>
-        <th>Round 1</th>
-        <th>Round 2</th>
-        <th>Round 3</th>
-        <th>Round 4</th>
-        <th>Round 5</th>
-        <th>Total</th>
-      </tr>
-    </table>
+    <table id="scoreTable"></table>
   </div>
-  <br>
-  <button class="primary" onclick="addPlayer()">+ Add Player</button>
 </div>
 
 <div class="panel">
@@ -188,7 +302,7 @@ button{
 <td>
 • A,K,Q,J,10 = 10 points<br>
 • 2-9 = face value<br>
-• Joker = 0<br>
+• Joker = 0 points<br>
 • Max loss = 80 points
 </td>
 </tr>
@@ -211,56 +325,128 @@ button{
 
 </table>
 </div>
-
 </div>
 
 </div>
 
 <script>
+let roundCount = 5;
 let players = [];
 
 function addPlayer(){
   const name = prompt("Enter Player Name:");
   if(!name) return;
-
-  players.push({name, scores:[0,0,0,0,0]});
+  players.push({name, scores:Array(roundCount).fill(0)});
   render();
 }
 
-function render(){
-  const table = document.getElementById("scoreTable");
+function addRound(){
+  roundCount += 1;
+  players = players.map(p => ({...p, scores:[...p.scores, 0]}));
+  render();
+}
 
-  table.innerHTML = `
-  <tr>
-    <th>Player</th>
-    <th>Round 1</th>
-    <th>Round 2</th>
-    <th>Round 3</th>
-    <th>Round 4</th>
-    <th>Round 5</th>
-    <th>Total</th>
-  </tr>
-  `;
+function resetAll(){
+  if(!confirm("Reset everything?")) return;
+  roundCount = 5;
+  players = [];
+  render();
+}
 
-  players.forEach((p,i)=>{
-    let total = p.scores.reduce((a,b)=>a+Number(b),0);
-
-    table.innerHTML += `
-    <tr>
-      <td>${p.name}</td>
-      ${p.scores.map((s,ri)=>`
-        <td><input type="number" value="${s}" onchange="updateScore(${i},${ri},this.value)"></td>
-      `).join("")}
-      <td><b>${total}</b></td>
-    </tr>
-    `;
-  });
+function totalPoints(p){
+  return p.scores.reduce((a,b)=>a + Number(b || 0), 0);
 }
 
 function updateScore(pi,ri,val){
-  players[pi].scores[ri] = Number(val);
+  players[pi].scores[ri] = Number(val || 0);
   render();
 }
+
+function renderTable(){
+  const table = document.getElementById("scoreTable");
+
+  const header = `
+    <tr>
+      <th>Player</th>
+      ${Array.from({length: roundCount}, (_,i)=>`<th>Round ${i+1}</th>`).join("")}
+      <th>Total</th>
+      <th>Remove</th>
+    </tr>
+  `;
+
+  const rows = players.map((p,pi)=>{
+    const total = totalPoints(p);
+    return `
+      <tr>
+        <td>${escapeHtml(p.name)}</td>
+        ${p.scores.map((s,ri)=>`
+          <td><input type="number" value="${s}" onchange="updateScore(${pi},${ri},this.value)"></td>
+        `).join("")}
+        <td><b>${total}</b></td>
+        <td><button class="danger" onclick="removePlayer(${pi})">X</button></td>
+      </tr>
+    `;
+  }).join("");
+
+  table.innerHTML = header + rows;
+}
+
+function removePlayer(idx){
+  players.splice(idx, 1);
+  render();
+}
+
+function renderLeaderboard(){
+  const list = document.getElementById("leaderList");
+  const winnerBadge = document.getElementById("winnerBadge");
+
+  document.getElementById("kpiPlayers").textContent = String(players.length);
+
+  if(players.length === 0){
+    winnerBadge.textContent = "Winner: —";
+    document.getElementById("kpiLeader").textContent = "—";
+    document.getElementById("kpiLeaderPts").textContent = "—";
+    list.innerHTML = `<li class="muted" style="margin-top:10px;">Add players to see the leaderboard.</li>`;
+    return;
+  }
+
+  const sorted = [...players].map(p=>({name:p.name, total: totalPoints(p)}))
+    .sort((a,b)=>a.total - b.total);
+
+  const leader = sorted[0];
+  winnerBadge.textContent = `Winner: ${leader.name} (${leader.total} pts)`;
+  document.getElementById("kpiLeader").textContent = leader.name;
+  document.getElementById("kpiLeaderPts").textContent = String(leader.total);
+
+  list.innerHTML = sorted.map((p,i)=>`
+    <li class="leaderItem ${i===0 ? "win" : ""}">
+      <div class="leaderLeft">
+        <div class="rank">${i+1}</div>
+        <div>
+          <div style="font-weight:800;">${escapeHtml(p.name)}</div>
+          <div class="muted">total points</div>
+        </div>
+      </div>
+      <div class="points">${p.total}</div>
+    </li>
+  `).join("");
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function render(){
+  renderTable();
+  renderLeaderboard();
+}
+
+render();
 </script>
 
 </body>
