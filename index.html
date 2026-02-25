@@ -205,33 +205,29 @@
     }
 
     @media print {
-  body { background:#fff !important; }
-
-  /* remove shadows */
-  .panel { box-shadow:none !important; }
-
-  /* hide buttons + quick actions section */
-  button { display:none !important; }
-  .smallRow { display:none !important; }
-
-  /* hide the entire quick actions panel */
-  .grid .panel:nth-child(2) {
-    display:none !important;
+  /* hide everything on the page */
+  body * {
+    visibility: hidden !important;
   }
 
-  /* clean input appearance */
-  input {
-    border:none !important;
-    width:60px !important;
+  /* show ONLY the scoreboard area */
+  #pdfArea, #pdfArea * {
+    visibility: visible !important;
   }
 
-  .tableWrap { overflow:visible !important; }
-  table { min-width:0 !important; }
-
-  /* hide rules section if you want it 1 page only */
-  .rulesWrap, .rulesTable {
-    display:none !important;
+  /* place it at the top-left so it prints clean */
+  #pdfArea {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
   }
+
+  /* optional: make it look cleaner in print */
+  body { background: #fff !important; }
+  .panel { box-shadow: none !important; }
+  button { display: none !important; }
+  input { border: none !important; }
 }
   </style>
 </head>
