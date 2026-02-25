@@ -1,981 +1,510 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rummy Points Tracker</title>
+
   <style>
-    :root{
-      --bg:#f5f7fb;
-      --fg:#0f172a;
-      --muted:#64748b;
-      --card:#ffffff;
-      --border:#e5e7eb;
-      --accent:#2563eb;
-      --accent2:#16a34a;
-      --danger:#dc2626;
-      --shadow: 0 10px 30px rgba(2,6,23,.08);
-      --radius: 18px;
-    }
-    *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--fg);
-    }
-    .topbar{ height:10px; background: linear-gradient(90deg, #0ea5e9, #22c55e, #2563eb); }
-
-    .wrap{ max-width: 1200px; margin: 0 auto; padding: 18px 14px 40px; }
-
-    .header{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-      justify-content:space-between;
-      margin: 10px 0 14px;
-    }
-    .title h1{
-      margin:0;
-      font-size: 28px;
-      letter-spacing: .2px;
-    }
-    .title p{
-      margin:6px 0 0;
-      color: var(--muted);
-      font-size: 14px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background:#f4f6fb;
     }
 
-    .btnrow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
+    h1{
+      margin:20px 0 10px;
     }
-    .btn{
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--fg);
-      padding: 10px 12px;
-      border-radius: 999px;
-      cursor:pointer;
-      box-shadow: 0 6px 18px rgba(2,6,23,.06);
-      font-size: 14px;
-    }
-    .btn.primary{
-      border-color: transparent;
-      background: var(--accent);
-      color: #fff;
-    }
-    .btn.good{
-      border-color: transparent;
-      background: var(--accent2);
-      color: #fff;
-    }
-    .btn.danger{
-      border-color: transparent;
-      background: var(--danger);
-      color:#fff;
+
+    .wrapper{
+      max-width:1200px;
+      margin:auto;
+      padding:15px;
     }
 
     .grid{
       display:grid;
-      grid-template-columns: 1.55fr .75fr;
-      gap: 14px;
-      align-items:start;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
     }
-    @media (max-width: 980px){
+    @media(max-width:900px){
       .grid{ grid-template-columns: 1fr; }
     }
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
+    .panel{
+      background:#fff;
+      padding:15px;
+      border-radius:14px;
+      box-shadow:0 6px 20px rgba(0,0,0,.08);
+      margin-bottom:20px;
     }
 
-    .noteRow{
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#eef3ff;
+      color:#1f4ed8;
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .muted{
+      color:#666;
+      font-size:13px;
+    }
+
+    .kpi{
       display:flex;
-      gap:12px;
+      gap:10px;
       flex-wrap:wrap;
-      align-items:center;
+      margin-top:10px;
+    }
+    .kpiCard{
+      background:#f7f8fc;
+      border:1px solid #e5e7f2;
+      padding:12px;
+      border-radius:12px;
+      min-width: 180px;
+    }
+    .kpiCard .label{
+      font-size:12px;
+      color:#666;
+      margin-bottom:6px;
+    }
+    .kpiCard .value{
+      font-size:18px;
+      font-weight:800;
+    }
+
+    .leaderList{
+      margin:10px 0 0;
+      padding:0;
+      list-style:none;
+    }
+    .leaderItem{
+      display:flex;
       justify-content:space-between;
-      margin-bottom: 10px;
-    }
-    .pill{
-      border:1px solid var(--border);
-      background: #f8fafc;
-      padding: 10px 12px;
-      border-radius: 999px;
-      color: var(--muted);
-      font-size: 13px;
-      display:flex;
-      gap:10px;
       align-items:center;
+      padding:10px 12px;
+      border:1px solid #e5e7f2;
+      border-radius:12px;
+      margin-top:8px;
+      background:#fff;
     }
-    .pill strong{
-      font-weight: 700;
-      color: var(--fg);
+    .leaderItem.win{
+      border-color:#2f6fed;
+      background:#eef3ff;
     }
-    .winnerBox{
-      border:1px dashed #cbd5e1;
-      background: #f8fafc;
-      padding: 10px 12px;
-      border-radius: 14px;
+    .rank{
+      width:28px;
+      height:28px;
+      border-radius:999px;
       display:flex;
-      gap:10px;
       align-items:center;
-      justify-content:space-between;
-      width: 100%;
+      justify-content:center;
+      font-weight:800;
+      background:#f0f2f7;
     }
-    .winnerBox .left{
+    .leaderLeft{
       display:flex;
-      flex-direction:column;
-      gap:2px;
+      align-items:center;
+      gap:10px;
     }
-    .winnerBox .left .small{ color: var(--muted); font-size:12px; }
-    .winnerBox .left .who{ font-size: 16px; }
-    .winnerBox .score{
-      font-weight: 800;
-      font-size: 18px;
-      color: var(--accent2);
+    .points{
+      font-weight:800;
     }
 
     .tableWrap{
-      border:1px solid var(--border);
-      border-radius: 16px;
-      overflow:auto;
-      background: #fff;
+      width:100%;
+      overflow-x:auto;
+      -webkit-overflow-scrolling: touch;
     }
+
     table{
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      min-width: 860px;
+      width:100%;
+      border-collapse:collapse;
+      min-width:900px;
     }
-    thead th{
-      position: sticky;
-      top: 0;
-      background: #eef2ff;
-      color: #0f172a;
-      text-align:left;
-      font-weight: 700;
-      padding: 14px 12px;
-      border-bottom:1px solid var(--border);
-      white-space:nowrap;
-    }
-    tbody td{
-      padding: 12px;
-      border-bottom:1px solid #f1f5f9;
-      vertical-align:middle;
-    }
-    tbody tr:last-child td{ border-bottom: none; }
-    tbody tr:hover td{ background:#fbfdff; }
 
-    .nameCell{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      min-width: 160px;
-    }
-    .nameInput{
-      width: 140px;
-      padding: 10px 10px;
-      border:1px solid var(--border);
-      border-radius: 12px;
-      outline:none;
-      font-size: 14px;
-    }
-    .scoreInput{
-      width: 110px;
-      padding: 10px 10px;
-      border:1px solid var(--border);
-      border-radius: 12px;
-      outline:none;
-      font-size: 14px;
+    th, td{
+      padding:10px;
+      border-bottom:1px solid #ddd;
       text-align:left;
     }
-    .totalCell{
-      font-weight: 800;
-      font-size: 18px;
-      min-width: 90px;
+
+    th{
+      background:#e9edf7;
+      position:sticky;
+      top:0;
+      z-index:2;
     }
-    .removeBtn{
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      border: none;
-      background: var(--danger);
-      color: #fff;
+
+    input{
+      padding:6px 8px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      font-size:14px;
+      width: 90px;
+    }
+
+    button{
+      padding:8px 12px;
+      border-radius:10px;
+      border:none;
       cursor:pointer;
-      font-size: 18px;
-      font-weight: 900;
-      box-shadow: 0 10px 20px rgba(220,38,38,.18);
+      font-weight:700;
     }
 
-    .rightCard h3{
-      margin: 0 0 8px;
-      font-size: 16px;
+    .primary{
+      background:#2f6fed;
+      color:#fff;
     }
-    .rightCard p{
-      margin: 0 0 10px;
-      color: var(--muted);
-      font-size: 13px;
+
+    .secondary{
+      background:#eef0f6;
     }
-    .rulesBtnRow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-      margin: 10px 0 12px;
+
+    .danger{
+      background:#d11;
+      color:#fff;
+    }
+
+    .rulesWrap{
+      width:100%;
+      overflow-x:auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .rulesTable{
-      width: 100%;
-      border:1px solid var(--border);
-      border-radius: 14px;
-      overflow:hidden;
-      background:#fff;
-    }
-    .rulesTable table{ min-width: 0; }
-    .rulesTable thead th{ background:#ecfeff; }
-    .miniInput{
-      width: 100%;
-      padding: 10px 10px;
-      border:1px solid var(--border);
-      border-radius: 12px;
-      outline:none;
-      font-size: 14px;
-    }
-    .miniPoints{
-      width: 90px;
-      padding: 10px 10px;
-      border:1px solid var(--border);
-      border-radius: 12px;
-      outline:none;
-      font-size: 14px;
-    }
-    .smallX{
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      border:none;
-      background: var(--danger);
-      color:#fff;
-      cursor:pointer;
-      font-weight: 900;
+      width:100%;
+      border-collapse:collapse;
+      min-width:720px;
     }
 
-    details{
-      border:1px solid var(--border);
-      border-radius: 16px;
-      overflow:hidden;
-      background:#fff;
-      margin-top: 14px;
+    .rulesTable th, .rulesTable td{
+      padding:12px;
+      border-bottom:1px solid #ddd;
+      vertical-align:top;
     }
-    summary{
-      cursor:pointer;
-      padding: 14px 12px;
-      background:#f8fafc;
+
+    .rulesTable th{
+      background:#e9edf7;
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
+
+    .smallRow{
       display:flex;
-      align-items:center;
-      justify-content:space-between;
       gap:10px;
-      user-select:none;
+      flex-wrap:wrap;
+      margin-top:10px;
     }
-    summary .label{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-    summary .label .t{ font-weight:800; }
-    summary .label .s{ color: var(--muted); font-size: 13px; }
-    summary .chev{ color: var(--muted); font-size: 16px; }
-    .rulesContent{
-      padding: 12px;
-      overflow:auto;
-    }
-
-    .rulesDetailsTable{
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 720px;
-    }
-    .rulesDetailsTable th, .rulesDetailsTable td{
-      border:1px solid var(--border);
-      padding: 10px;
-      vertical-align: top;
-    }
-    .rulesDetailsTable th{
-      background:#f1f5f9;
-      text-align:left;
-      white-space:nowrap;
-    }
-    .bul{
-      margin:0;
-      padding-left: 18px;
-    }
-    .bul li{ margin: 4px 0; color:#0f172a; }
-    .muted{ color: var(--muted); }
   </style>
 </head>
+
 <body>
-  <div class="topbar"></div>
+<div class="wrapper">
 
-  <div class="wrap">
-    <div class="header">
-      <div class="title">
-        <h1>Rummy Points Tracker</h1>
-        <p>Track rounds, totals, leaderboard, and rules (works on phone + computer). Lowest total points wins.</p>
+  <h1>Rummy Points Tracker</h1>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="badge" id="winnerBadge">Winner: —</div>
+      <div class="muted" id="winnerHint" style="margin-top:8px;">Lowest total points is winning.</div>
+
+      <div class="kpi">
+        <div class="kpiCard">
+          <div class="label">Current leader</div>
+          <div class="value" id="kpiLeader">—</div>
+        </div>
+        <div class="kpiCard">
+          <div class="label">Leader points</div>
+          <div class="value" id="kpiLeaderPts">—</div>
+        </div>
+        <div class="kpiCard">
+          <div class="label">Players</div>
+          <div class="value" id="kpiPlayers">0</div>
+        </div>
       </div>
 
-      <div class="btnrow">
-        <button class="btn" id="applyBtn">apply</button>
-        <button class="btn primary" id="saveBtn">save</button>
-        <button class="btn" id="loadBtn">load</button>
-        <button class="btn danger" id="resetBtn">reset</button>
-      </div>
+      <div style="margin-top:14px; font-weight:800;">Leaderboard (lowest points wins)</div>
+      <ul class="leaderList" id="leaderList"></ul>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <div class="noteRow">
-          <div class="pill">
-            scoring note
-            <strong>lowest total points wins</strong>
-          </div>
-
-          <div class="winnerBox" id="winnerBox">
-            <div class="left">
-              <div class="small">winner right now</div>
-              <div class="who" id="winnerName">—</div>
-            </div>
-            <div class="score" id="winnerScore">—</div>
-          </div>
-        </div>
-
-        <div class="btnrow" style="justify-content:space-between; margin: 10px 0 12px;">
-          <button class="btn good" id="addPlayerBtn">+ add player</button>
-          <div class="btnrow">
-            <button class="btn" id="addRoundBtn">+ add round</button>
-            <button class="btn" id="removeRoundBtn">- remove round</button>
-          </div>
-        </div>
-
-        <div class="tableWrap" id="scoreTableWrap"></div>
-
-        <div style="margin-top:12px; color:var(--muted); font-size:13px;">
-          tip: edit scores directly. it auto-saves to your device. use reset only when you want to clear everything.
-        </div>
-
-        <details>
-          <summary>
-            <div class="label">
-              <div class="t">Rules / Details</div>
-              <div class="s">Tap to expand/collapse (mobile friendly)</div>
-            </div>
-            <div class="chev">▼</div>
-          </summary>
-          <div class="rulesContent">
-            <table class="rulesDetailsTable">
-              <thead>
-                <tr>
-                  <th style="width:220px;">Category</th>
-                  <th>Rules / Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Sequence order</td>
-                  <td>A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2, A</td>
-                </tr>
-                <tr>
-                  <td>Players and Cards</td>
-                  <td>
-                    <ul class="bul">
-                      <li>2-6 players use 2 decks (106 cards)</li>
-                      <li>7+ players use 3 decks (159 cards)</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Objective</td>
-                  <td>
-                    <ul class="bul">
-                      <li>Form valid sequences (runs) and sets (trios)</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Sequence / Run</td>
-                  <td>
-                    <ul class="bul">
-                      <li>A consecutive set of cards in the same suit (example: 5♥, 6♥, 7♥)</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Set / Trio</td>
-                  <td>
-                    <ul class="bul">
-                      <li>Three cards of the same rank but different suits (example: 5♠, 5♥, 5♦)</li>
-                      <li>Valid declaration must include at least 2 runs: 1 pure sequence (no joker) + 1 additional run</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Wild Cards</td>
-                  <td>
-                    <ul class="bul">
-                      <li>Turned-up joker and printed jokers act as wild cards</li>
-                      <li>Wild cards can substitute for any card except in a pure sequence</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Dealing</td>
-                  <td>
-                    <ul class="bul">
-                      <li>13 cards are dealt to each player</li>
-                      <li>A card is turned up to determine the wild card</li>
-                      <li>Players draw and discard cards to complete their hand</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Valid Declaration</td>
-                  <td>
-                    <ul class="bul">
-                      <li>Must include at least 2 runs, with one being a pure sequence</li>
-                      <li>Additional combinations (sets or runs) can be made with or without wild cards</li>
-                      <li>Combinations cannot overlap</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Packing / Dropping</td>
-                  <td>
-                    <ul class="bul">
-                      <li>First Drop: pay 10 points if dropping before picking a card</li>
-                      <li>Middle Drop: pay 40 points if dropping after picking a card</li>
-                      <li>If all players except one drop, the remaining player automatically wins</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Scoring</td>
-                  <td>
-                    <ul class="bul">
-                      <li>Face Cards (A, K, Q, J, 10): 10 points each</li>
-                      <li>Number Cards (2-9): face value</li>
-                      <li>Jokers (wild cards): 0 points</li>
-                      <li>Cards in valid combinations (runs/sets) do not count for points</li>
-                      <li>Maximum points for a losing hand: 80 points</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Hand Rummy</td>
-                  <td>
-                    <ul class="bul">
-                      <li>If a player is dealt 13 valid cards, they can declare “Hand Rummy” on their first turn</li>
-                      <li>Other players pay double their unmatched cards’ value</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Game Void</td>
-                  <td>
-                    <ul class="bul">
-                      <li>If the stockpile runs out and no one declares, the game is void</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Variations</td>
-                  <td>
-                    <ul class="bul">
-                      <li>Stakes may be doubled if the turned-up card is a printed joker</li>
-                      <li>Some rules treat all Aces as jokers when a printed joker is turned up</li>
-                      <li>21-card rummy is a popular variation with additional rules and bonuses</li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Tactics</td>
-                  <td>
-                    <ul class="bul">
-                      <li>Use skill to minimize losses and improve winning chances</li>
-                      <li>Decide whether to play or pack based on the initial hand</li>
-                      <li>Discard strategically to block opponents or trick them into giving you needed cards</li>
-                    </ul>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div class="muted" style="margin-top:10px; font-size:12px;">
-              note: rules shown here are just reference notes. scoring inputs above are for tracking points only.
-            </div>
-          </div>
-        </details>
+    <div class="panel">
+      <div style="font-weight:800;">Quick actions</div>
+      <div class="muted" style="margin-top:6px;">Add players and enter round points. Leaderboard updates automatically.</div>
+      <div class="smallRow">
+        <button class="primary" id="addPlayerBtn">+ Add Player</button>
+        <button class="secondary" id="addRoundBtn">+ Add Round</button>
+        <button class="danger" id="resetBtn">Reset All</button>
       </div>
-
-      <div class="card rightCard">
-        <h3>Actions / Points</h3>
-        <p>Edit these if your house rules change. Use “apply” to push changes into the round dropdowns.</p>
-
-        <div class="rulesBtnRow">
-          <button class="btn good" id="addRuleBtn">+ add rule</button>
-          <button class="btn" id="clearSearchBtn" style="display:none;">clear</button>
-        </div>
-
-        <div class="rulesTable" id="rulesTableWrap"></div>
-
-        <div style="margin-top:12px; color:var(--muted); font-size:12px;">
-          You can still type points manually in the round boxes, even if you don’t use actions.
-        </div>
+      <div class="muted" style="margin-top:10px;">
+        This scoreboard auto-saves on this device. Refresh will NOT erase it. Only “Reset All” clears it.
       </div>
     </div>
   </div>
 
-  <script>
-    const STORAGE_KEY = "rummy_scoreboard_v1";
+  <div class="panel">
+    <div class="tableWrap">
+      <table id="scoreTable"></table>
+    </div>
+  </div>
 
-    let roundCount = 5;
+  <div class="panel">
+    <h2>Rules / Details</h2>
 
-    let rules = [
-      { action: "Pure Sequence Missing", points: 80 },
-      { action: "Unmatched High Cards", points: 20 },
-      { action: "Unmatched Number Cards", points: 12 },
-      { action: "First Drop", points: 20 },
-      { action: "Middle Drop", points: 40 },
-    ];
+    <div class="rulesWrap">
+      <table class="rulesTable">
+        <tr>
+          <th>Category</th>
+          <th>Rules / Details</th>
+        </tr>
 
-    let players = [
-      { name: "jacob",  scores: Array(roundCount).fill(0), actions: Array(roundCount).fill("") },
-      { name: "chacko", scores: Array(roundCount).fill(0), actions: Array(roundCount).fill("") },
-      { name: "jeevan", scores: Array(roundCount).fill(0), actions: Array(roundCount).fill("") },
-      { name: "janice", scores: Array(roundCount).fill(0), actions: Array(roundCount).fill("") },
-      { name: "alex",   scores: Array(roundCount).fill(0), actions: Array(roundCount).fill("") },
-    ];
+        <tr>
+          <td>Players and Cards</td>
+          <td>
+            • 2-6 players use 2 decks (106 cards)<br>
+            • 7+ players use 3 decks (159 cards)
+          </td>
+        </tr>
 
-    const scoreTableWrap = document.getElementById("scoreTableWrap");
-    const rulesTableWrap = document.getElementById("rulesTableWrap");
+        <tr>
+          <td>Objective</td>
+          <td>Form valid sequences (runs) and sets (trios).</td>
+        </tr>
 
-    const winnerNameEl = document.getElementById("winnerName");
-    const winnerScoreEl = document.getElementById("winnerScore");
+        <tr>
+          <td>Sequence / Run</td>
+          <td>A consecutive set of cards in same suit (5♥ 6♥ 7♥).</td>
+        </tr>
 
-    const applyBtn = document.getElementById("applyBtn");
-    const saveBtn = document.getElementById("saveBtn");
-    const loadBtn = document.getElementById("loadBtn");
-    const resetBtn = document.getElementById("resetBtn");
+        <tr>
+          <td>Set / Trio</td>
+          <td>
+            • Must include 2 runs (1 pure sequence)<br>
+            • Three cards same rank different suits
+          </td>
+        </tr>
 
-    const addPlayerBtn = document.getElementById("addPlayerBtn");
-    const addRoundBtn = document.getElementById("addRoundBtn");
-    const removeRoundBtn = document.getElementById("removeRoundBtn");
+        <tr>
+          <td>Wild Cards</td>
+          <td>
+            • Printed jokers + turned up joker<br>
+            • Cannot use joker in pure sequence
+          </td>
+        </tr>
 
-    const addRuleBtn = document.getElementById("addRuleBtn");
+        <tr>
+          <td>Scoring</td>
+          <td>
+            • A,K,Q,J,10 = 10 points<br>
+            • 2-9 = face value<br>
+            • Joker = 0 points<br>
+            • Max loss = 80 points
+          </td>
+        </tr>
 
-    function safeNum(v){
-      const n = Number(v);
-      if (Number.isFinite(n)) return n;
-      return 0;
-    }
+        <tr>
+          <td>Packing / Dropping</td>
+          <td>
+            • First Drop = 20 pts<br>
+            • Middle Drop = 40 pts
+          </td>
+        </tr>
 
-    function computeTotal(p){
-      return (p.scores || []).reduce((a,b)=>a + safeNum(b), 0);
-    }
+        <tr>
+          <td>Hand Rummy</td>
+          <td>
+            • 13 valid cards on first turn<br>
+            • Others pay double
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
 
-    function getWinnerNow(){
-      const active = players
-        .map((p, idx) => ({ idx, name: (p.name||"").trim(), total: computeTotal(p), allZero: (p.scores||[]).every(x => safeNum(x) === 0) }))
-        .filter(x => x.name.length > 0);
+</div>
 
-      if(active.length === 0) return null;
+<script>
+  // ====== LOCAL STORAGE (THIS IS THE MAIN FIX) ======
+  const STORAGE_KEY = "rummy_points_tracker_v1";
 
-      // pick winner even if some are all zero (that’s what your screenshot shows)
-      active.sort((a,b)=>a.total - b.total);
-      return active[0];
-    }
+  function saveState(){
+    const payload = { roundCount, players };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
 
-    function updateWinnerUI(){
-      const w = getWinnerNow();
-      if(!w){
-        winnerNameEl.textContent = "—";
-        winnerScoreEl.textContent = "—";
-        return;
+  function loadState(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return false;
+    try{
+      const data = JSON.parse(raw);
+      if(typeof data.roundCount === "number" && Array.isArray(data.players)){
+        roundCount = data.roundCount;
+        players = data.players;
+        normalize();
+        return true;
       }
-      winnerNameEl.textContent = w.name;
-      winnerScoreEl.textContent = String(w.total);
-    }
+    }catch(e){}
+    return false;
+  }
 
-    function saveState(){
-      const payload = { roundCount, rules, players };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    }
+  function clearState(){
+    localStorage.removeItem(STORAGE_KEY);
+  }
 
-    function loadState(){
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return false;
-      try{
-        const data = JSON.parse(raw);
-        if(typeof data.roundCount === "number" && Array.isArray(data.players) && Array.isArray(data.rules)){
-          roundCount = data.roundCount;
-          rules = data.rules;
-          players = data.players;
-          normalizeAll();
-          return true;
-        }
-      }catch(e){}
-      return false;
-    }
+  // ====== APP STATE ======
+  let roundCount = 5;
+  let players = [];
 
-    function clearState(){
-      localStorage.removeItem(STORAGE_KEY);
-    }
-
-    function normalizePlayer(p){
-      if(!p) return { name:"", scores:Array(roundCount).fill(0), actions:Array(roundCount).fill("") };
-      if(typeof p.name !== "string") p.name = String(p.name ?? "");
-      if(!Array.isArray(p.scores)) p.scores = [];
-      if(!Array.isArray(p.actions)) p.actions = [];
-      // resize
-      if(p.scores.length < roundCount) p.scores = p.scores.concat(Array(roundCount - p.scores.length).fill(0));
-      if(p.scores.length > roundCount) p.scores = p.scores.slice(0, roundCount);
-      if(p.actions.length < roundCount) p.actions = p.actions.concat(Array(roundCount - p.actions.length).fill(""));
-      if(p.actions.length > roundCount) p.actions = p.actions.slice(0, roundCount);
-      // ensure numbers
-      p.scores = p.scores.map(safeNum);
-      p.actions = p.actions.map(a => String(a ?? ""));
-      return p;
-    }
-
-    function normalizeAll(){
-      players = players.map(normalizePlayer);
-      if(!Array.isArray(rules)) rules = [];
-      rules = rules.map(r => ({ action: String(r.action ?? ""), points: safeNum(r.points) }));
-    }
-
-    function addPlayer(){
-      players.push(normalizePlayer({ name:"", scores:Array(roundCount).fill(0), actions:Array(roundCount).fill("") }));
-      saveState();
-      render();
-    }
-
-    function removePlayer(idx){
-      players.splice(idx, 1);
-      saveState();
-      render();
-    }
-
-    function addRound(){
-      roundCount += 1;
-      players.forEach(p => {
-        p.scores.push(0);
-        p.actions.push("");
-      });
-      saveState();
-      render();
-    }
-
-    function removeRound(){
-      if(roundCount <= 1) return;
-      roundCount -= 1;
-      players.forEach(p => {
-        p.scores.pop();
-        p.actions.pop();
-      });
-      saveState();
-      render();
-    }
-
-    function updateName(pi, val){
-      players[pi].name = String(val ?? "");
-      saveState();
-      render(); // updates leaderboard/winner display
-    }
-
-    function updateScore(pi, ri, val){
-      players[pi].scores[ri] = safeNum(val);
-      saveState();
-      render(); // keep totals live
-    }
-
-    function updateAction(pi, ri, val){
-      players[pi].actions[ri] = String(val ?? "");
-      // if action exists in rules, auto-fill points into the score box
-      const found = rules.find(r => r.action === players[pi].actions[ri]);
-      if(found){
-        players[pi].scores[ri] = safeNum(found.points);
-      }
-      saveState();
-      render();
-    }
-
-    function addRule(){
-      rules.push({ action: "New Rule", points: 0 });
-      saveState();
-      render();
-    }
-
-    function removeRule(idx){
-      rules.splice(idx, 1);
-      saveState();
-      render();
-    }
-
-    function updateRuleAction(idx, val){
-      rules[idx].action = String(val ?? "");
-      saveState();
-      render();
-    }
-
-    function updateRulePoints(idx, val){
-      rules[idx].points = safeNum(val);
-      saveState();
-      render();
-    }
-
-    function applyRulesToSelections(){
-      // no need to mutate saved data; render reads rules live
-      render();
-    }
-
-    function resetAll(){
-      if(!confirm("Reset everything?")) return;
-      roundCount = 5;
-      rules = [
-        { action: "Pure Sequence Missing", points: 80 },
-        { action: "Unmatched High Cards", points: 20 },
-        { action: "Unmatched Number Cards", points: 12 },
-        { action: "First Drop", points: 20 },
-        { action: "Middle Drop", points: 40 },
-      ];
-      players = [];
-      clearState();
-      render();
-    }
-
-    function buildActionSelect(pi, ri){
-      const sel = document.createElement("select");
-      sel.className = "scoreInput";
-      sel.style.width = "170px";
-      sel.style.minWidth = "170px";
-      sel.style.background = "#fff";
-
-      const opt0 = document.createElement("option");
-      opt0.value = "";
-      opt0.textContent = "(choose action)";
-      sel.appendChild(opt0);
-
-      rules.forEach(r => {
-        const o = document.createElement("option");
-        o.value = r.action;
-        o.textContent = r.action;
-        sel.appendChild(o);
-      });
-
-      sel.value = players[pi].actions[ri] || "";
-      sel.addEventListener("change", () => updateAction(pi, ri, sel.value));
-      return sel;
-    }
-
-    function renderScoreTable(){
-      const table = document.createElement("table");
-
-      const thead = document.createElement("thead");
-      const trh = document.createElement("tr");
-
-      const thPlayer = document.createElement("th");
-      thPlayer.textContent = "Player";
-      trh.appendChild(thPlayer);
-
-      for(let r=0; r<roundCount; r++){
-        const th = document.createElement("th");
-        th.textContent = `Round ${r+1}`;
-        trh.appendChild(th);
-      }
-
-      const thTotal = document.createElement("th");
-      thTotal.textContent = "Total";
-      trh.appendChild(thTotal);
-
-      const thRemove = document.createElement("th");
-      thRemove.textContent = "Remove";
-      trh.appendChild(thRemove);
-
-      thead.appendChild(trh);
-      table.appendChild(thead);
-
-      const tbody = document.createElement("tbody");
-
-      players.forEach((p, pi) => {
-        const tr = document.createElement("tr");
-
-        // player name
-        const tdName = document.createElement("td");
-        const nameWrap = document.createElement("div");
-        nameWrap.className = "nameCell";
-
-        const nameInput = document.createElement("input");
-        nameInput.className = "nameInput";
-        nameInput.placeholder = "name";
-        nameInput.value = p.name || "";
-        nameInput.addEventListener("input", () => updateName(pi, nameInput.value));
-
-        nameWrap.appendChild(nameInput);
-        tdName.appendChild(nameWrap);
-        tr.appendChild(tdName);
-
-        // rounds: action select + points input (like your screenshot)
-        for(let ri=0; ri<roundCount; ri++){
-          const td = document.createElement("td");
-
-          const row = document.createElement("div");
-          row.style.display = "flex";
-          row.style.gap = "10px";
-          row.style.alignItems = "center";
-          row.style.flexWrap = "wrap";
-
-          const actionSelect = buildActionSelect(pi, ri);
-
-          const scoreInput = document.createElement("input");
-          scoreInput.className = "scoreInput";
-          scoreInput.type = "number";
-          scoreInput.min = "0";
-          scoreInput.step = "1";
-          scoreInput.value = String(safeNum(p.scores[ri] ?? 0));
-          scoreInput.addEventListener("input", () => updateScore(pi, ri, scoreInput.value));
-
-          row.appendChild(actionSelect);
-          row.appendChild(scoreInput);
-
-          td.appendChild(row);
-          tr.appendChild(td);
-        }
-
-        // total
-        const tdTotal = document.createElement("td");
-        tdTotal.className = "totalCell";
-        tdTotal.textContent = String(computeTotal(p));
-        tr.appendChild(tdTotal);
-
-        // remove
-        const tdRemove = document.createElement("td");
-        const x = document.createElement("button");
-        x.className = "removeBtn";
-        x.textContent = "x";
-        x.addEventListener("click", () => removePlayer(pi));
-        tdRemove.appendChild(x);
-        tr.appendChild(tdRemove);
-
-        tbody.appendChild(tr);
-      });
-
-      table.appendChild(tbody);
-
-      scoreTableWrap.innerHTML = "";
-      const wrap = document.createElement("div");
-      wrap.className = "tableWrap";
-      wrap.appendChild(table);
-      scoreTableWrap.appendChild(wrap);
-    }
-
-    function renderRulesTable(){
-      const table = document.createElement("table");
-
-      const thead = document.createElement("thead");
-      const trh = document.createElement("tr");
-      const thA = document.createElement("th"); thA.textContent = "Action";
-      const thP = document.createElement("th"); thP.textContent = "Points";
-      const thX = document.createElement("th"); thX.textContent = "";
-      trh.appendChild(thA); trh.appendChild(thP); trh.appendChild(thX);
-      thead.appendChild(trh);
-      table.appendChild(thead);
-
-      const tbody = document.createElement("tbody");
-      rules.forEach((r, idx) => {
-        const tr = document.createElement("tr");
-
-        const tdA = document.createElement("td");
-        const inpA = document.createElement("input");
-        inpA.className = "miniInput";
-        inpA.value = r.action;
-        inpA.addEventListener("input", () => updateRuleAction(idx, inpA.value));
-        tdA.appendChild(inpA);
-        tr.appendChild(tdA);
-
-        const tdP = document.createElement("td");
-        const inpP = document.createElement("input");
-        inpP.className = "miniPoints";
-        inpP.type = "number";
-        inpP.step = "1";
-        inpP.min = "0";
-        inpP.value = String(safeNum(r.points));
-        inpP.addEventListener("input", () => updateRulePoints(idx, inpP.value));
-        tdP.appendChild(inpP);
-        tr.appendChild(tdP);
-
-        const tdX = document.createElement("td");
-        const bx = document.createElement("button");
-        bx.className = "smallX";
-        bx.textContent = "x";
-        bx.addEventListener("click", () => removeRule(idx));
-        tdX.appendChild(bx);
-        tr.appendChild(tdX);
-
-        tbody.appendChild(tr);
-      });
-
-      table.appendChild(tbody);
-
-      rulesTableWrap.innerHTML = "";
-      const wrap = document.createElement("div");
-      wrap.className = "rulesTable";
-      wrap.appendChild(table);
-      rulesTableWrap.appendChild(wrap);
-    }
-
-    function render(){
-      normalizeAll();
-      renderScoreTable();
-      renderRulesTable();
-      updateWinnerUI();
-    }
-
-    // button wiring
-    addPlayerBtn.addEventListener("click", addPlayer);
-    addRoundBtn.addEventListener("click", addRound);
-    removeRoundBtn.addEventListener("click", removeRound);
-    addRuleBtn.addEventListener("click", addRule);
-
-    applyBtn.addEventListener("click", () => {
-      applyRulesToSelections();
-      saveState();
+  function normalize(){
+    // make sure scores array matches roundCount and values are numbers
+    players = (players || []).map(p => {
+      const name = String(p.name ?? "");
+      let scores = Array.isArray(p.scores) ? p.scores.map(x => Number(x || 0)) : [];
+      if(scores.length < roundCount) scores = scores.concat(Array(roundCount - scores.length).fill(0));
+      if(scores.length > roundCount) scores = scores.slice(0, roundCount);
+      return { name, scores };
     });
+  }
 
-    saveBtn.addEventListener("click", () => {
-      saveState();
-      alert("Saved on this device.");
-    });
-
-    loadBtn.addEventListener("click", () => {
-      const ok = loadState();
-      if(!ok) alert("No saved data found yet.");
-      render();
-    });
-
-    resetBtn.addEventListener("click", resetAll);
-
-    // init
-    loadState(); // auto-restore on refresh
+  // ====== ACTIONS ======
+  function addPlayer(){
+    const name = prompt("Enter Player Name:");
+    if(!name) return;
+    players.push({ name, scores: Array(roundCount).fill(0) });
+    saveState();
     render();
-  </script>
+  }
+
+  function addRound(){
+    roundCount += 1;
+    players = players.map(p => ({ ...p, scores: [...p.scores, 0] }));
+    saveState();
+    render();
+  }
+
+  function resetAll(){
+    if(!confirm("Reset everything? This will clear saved scoreboard.")) return;
+    roundCount = 5;
+    players = [];
+    clearState();     // ONLY reset clears storage
+    render();
+  }
+
+  function removePlayer(idx){
+    players.splice(idx, 1);
+    saveState();
+    render();
+  }
+
+  function totalPoints(p){
+    return (p.scores || []).reduce((a,b)=>a + Number(b || 0), 0);
+  }
+
+  function updateScore(pi, ri, val){
+    players[pi].scores[ri] = Number(val || 0);
+    saveState();   // auto-save after every edit
+    render();
+  }
+
+  // ====== RENDER ======
+  function renderTable(){
+    const table = document.getElementById("scoreTable");
+
+    const header = `
+      <tr>
+        <th>Player</th>
+        ${Array.from({length: roundCount}, (_,i)=>`<th>Round ${i+1}</th>`).join("")}
+        <th>Total</th>
+        <th>Remove</th>
+      </tr>
+    `;
+
+    const rows = players.map((p,pi)=>{
+      const total = totalPoints(p);
+      return `
+        <tr>
+          <td>${escapeHtml(p.name)}</td>
+          ${p.scores.map((s,ri)=>`
+            <td><input type="number" value="${Number(s||0)}" oninput="updateScore(${pi},${ri},this.value)"></td>
+          `).join("")}
+          <td><b>${total}</b></td>
+          <td><button class="danger" onclick="removePlayer(${pi})">X</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    table.innerHTML = header + rows;
+  }
+
+  function renderLeaderboard(){
+    const list = document.getElementById("leaderList");
+    const winnerBadge = document.getElementById("winnerBadge");
+
+    document.getElementById("kpiPlayers").textContent = String(players.length);
+
+    if(players.length === 0){
+      winnerBadge.textContent = "Winner: —";
+      document.getElementById("kpiLeader").textContent = "—";
+      document.getElementById("kpiLeaderPts").textContent = "—";
+      list.innerHTML = `<li class="muted" style="margin-top:10px;">Add players to see the leaderboard.</li>`;
+      return;
+    }
+
+    const sorted = [...players]
+      .map(p => ({ name: p.name, total: totalPoints(p) }))
+      .sort((a,b)=>a.total - b.total);
+
+    const leader = sorted[0];
+    winnerBadge.textContent = `Winner: ${leader.name} (${leader.total} pts)`;
+    document.getElementById("kpiLeader").textContent = leader.name;
+    document.getElementById("kpiLeaderPts").textContent = String(leader.total);
+
+    list.innerHTML = sorted.map((p,i)=>`
+      <li class="leaderItem ${i===0 ? "win" : ""}">
+        <div class="leaderLeft">
+          <div class="rank">${i+1}</div>
+          <div>
+            <div style="font-weight:800;">${escapeHtml(p.name)}</div>
+            <div class="muted">total points</div>
+          </div>
+        </div>
+        <div class="points">${p.total}</div>
+      </li>
+    `).join("");
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function render(){
+    renderTable();
+    renderLeaderboard();
+  }
+
+  // ====== BUTTON WIRING ======
+  document.getElementById("addPlayerBtn").addEventListener("click", addPlayer);
+  document.getElementById("addRoundBtn").addEventListener("click", addRound);
+  document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+  // ====== INIT ======
+  // Load saved data first. If none exists, start empty.
+  loadState();
+  normalize();
+  render();
+</script>
+
 </body>
 </html>
