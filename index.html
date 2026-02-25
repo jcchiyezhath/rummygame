@@ -8,158 +8,385 @@
     :root{
       --bg:#ffffff;
       --fg:#111111;
-      --muted:#666;
-      --card:#f7f7f7;
-      --border:#e2e2e2;
+      --muted:#5e6672;
+      --card:#f7f8fb;
+      --border:#e5e7ee;
       --accent:#2f6fed;
-      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --accent2:#0b7a78;
+      --shadow: 0 12px 34px rgba(16,24,40,.10);
+      --shadow2: 0 6px 16px rgba(16,24,40,.08);
       --danger:#d11;
       --ok:#198754;
+
+      --radius:18px;
+      --radius2:14px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     body.dark{
       --bg:#0f1115;
       --fg:#f2f2f2;
-      --muted:#a7a7a7;
+      --muted:#a7adbb;
       --card:#171a21;
       --border:#2a2f3a;
       --accent:#6aa6ff;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --accent2:#22c3b8;
+      --shadow: 0 18px 45px rgba(0,0,0,.45);
+      --shadow2: 0 10px 24px rgba(0,0,0,.35);
     }
+
     *{ box-sizing:border-box; }
+    html, body{ height:100%; }
     body{
       margin:0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:var(--bg);
+      font-family: var(--sans);
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(47,111,237,.12), transparent 55%),
+                  radial-gradient(1000px 600px at 120% 10%, rgba(11,122,120,.10), transparent 50%),
+                  var(--bg);
       color:var(--fg);
     }
-    .topbar{ height:8px; background:#0b7a78; }
-    .wrap{ max-width:1200px; margin:0 auto; padding:18px 14px 40px; }
-    h1{ margin:10px 0 14px; text-align:center; font-size:38px; letter-spacing:.4px; }
+
+    .topbar{ height:10px; background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+
+    .wrap{
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin: 10px 0 14px;
+    }
+
+    .titleBlock h1{
+      margin:0;
+      font-size: 34px;
+      letter-spacing:.2px;
+      line-height:1.15;
+    }
+    .subtitle{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.65);
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow2);
+    }
+    body.dark .pill{
+      background: rgba(15,17,21,.65);
+    }
+
+    .btn{
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: transparent;
+      color: var(--fg);
+      cursor:pointer;
+      font-size:14px;
+      transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ box-shadow: var(--shadow2); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0px); }
+
+    .btn.primary{
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      color:#fff;
+      border-color: transparent;
+    }
+    .btn.danger{
+      background: var(--danger);
+      color:#fff;
+      border-color: transparent;
+    }
+
+    select, input[type="text"], input[type="number"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.85);
+      color: var(--fg);
+      outline:none;
+      font-size:14px;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    body.dark select, body.dark input[type="text"], body.dark input[type="number"]{
+      background: rgba(15,17,21,.72);
+    }
+    select:focus, input:focus{
+      border-color: rgba(47,111,237,.55);
+      box-shadow: 0 0 0 4px rgba(47,111,237,.16);
+    }
+    input[type="number"]{ text-align:right; }
+
+    .panel{
+      background: rgba(255,255,255,.66);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    body.dark .panel{
+      background: rgba(15,17,21,.62);
+    }
+
     .grid{
       display:grid;
-      grid-template-columns: 1.6fr 1fr;
+      grid-template-columns: 1.7fr 1fr;
       gap:14px;
       align-items:start;
     }
-    .panel{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:18px;
-      box-shadow: var(--shadow);
-      padding:14px;
+
+    .sectionTitle{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
     }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
-    .btn{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:var(--bg);
-      color:var(--fg);
-      cursor:pointer;
-      font-size:14px;
+    .sectionTitle .name{
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:.2px;
     }
-    .btn.primary{ background:var(--accent); color:#fff; border-color:transparent; }
-    .btn.danger{ background:var(--danger); color:#fff; border-color:transparent; }
-    .btn.small{ padding:7px 10px; font-size:13px; border-radius:10px; }
     .muted{ color:var(--muted); font-size:13px; }
+
+    .notice{
+      margin-top:8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .error{
+      margin-top:10px;
+      color: var(--danger);
+      font-size: 13px;
+    }
+
+    .tableWrap{
+      overflow:auto;
+      border-radius: var(--radius2);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.85);
+    }
+    body.dark .tableWrap{ background: rgba(15,17,21,.72); }
+
     table{
       width:100%;
       border-collapse:separate;
       border-spacing:0;
-      overflow:hidden;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:var(--bg);
+      min-width: 880px; /* desktop-friendly */
     }
+
     th, td{
       border-bottom:1px solid var(--border);
       border-right:1px solid var(--border);
       padding:10px 8px;
       font-size:14px;
       vertical-align:middle;
+      background: transparent;
     }
     th:last-child, td:last-child{ border-right:none; }
     tr:last-child td{ border-bottom:none; }
+
     th{
-      background: linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,0));
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: linear-gradient(180deg, rgba(47,111,237,.12), rgba(47,111,237,0));
       text-align:left;
-      position:sticky;
-      top:0;
-      z-index:1;
     }
-    input[type="text"], input[type="number"], select{
-      width:100%;
-      padding:9px 10px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      background:var(--bg);
-      color:var(--fg);
-      outline:none;
-      font-size:14px;
+    body.dark th{
+      background: linear-gradient(180deg, rgba(106,166,255,.18), rgba(106,166,255,0));
     }
-    input[type="number"]{ text-align:right; }
+
     .scoreCell{
       display:grid;
-      grid-template-columns: 1fr 90px;
+      grid-template-columns: 1fr 92px;
       gap:8px;
       align-items:center;
+      min-width: 250px;
     }
+
     .totalCell{
-      font-weight:700;
+      font-weight:800;
       text-align:right;
-      min-width:80px;
+      min-width: 110px;
     }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border:1px solid var(--border);
-      border-radius:14px;
-      background:var(--bg);
+
+    .rightCol{
+      display:grid;
+      gap:14px;
     }
-    .rankBox{
+
+    .leaderboard{
       display:grid;
       gap:10px;
       margin-top:10px;
     }
     .rankRow{
       display:flex;
-      gap:10px;
       align-items:center;
       justify-content:space-between;
+      gap:10px;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.70);
+    }
+    body.dark .rankRow{ background: rgba(15,17,21,.72); }
+    .rankLabel{ color:var(--muted); font-size:13px; }
+    .rankName{ font-size:16px; font-weight:800; }
+    .rankPts{ color:var(--muted); font-size:13px; white-space:nowrap; }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       padding:10px 12px;
       border:1px solid var(--border);
-      border-radius:14px;
-      background:var(--bg);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.70);
     }
-    .rankLabel{ color:var(--muted); font-size:13px; }
-    .rankName{ font-weight:700; }
-    .rulesTable td{ padding:8px 8px; }
-    .rightTop{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
-    .hint{ margin-top:10px; font-size:13px; color:var(--muted); }
-    .error{ margin-top:10px; color:var(--danger); font-size:13px; }
+    body.dark .badge{ background: rgba(15,17,21,.72); }
+    .badge .label{ color:var(--muted); font-size:12px; }
+    .badge .value{ font-family: var(--mono); font-size:13px; }
+
+    details{
+      border:1px solid var(--border);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.70);
+      overflow:hidden;
+    }
+    body.dark details{ background: rgba(15,17,21,.72); }
+    summary{
+      cursor:pointer;
+      padding:12px 12px;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      user-select:none;
+    }
+    summary::-webkit-details-marker{ display:none; }
+    .summaryTitle{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+    .summaryTitle .t{ font-weight:800; }
+    .summaryTitle .s{ color:var(--muted); font-size:13px; }
+    .detailsBody{ padding: 0 12px 12px; }
+
+    .rulesTable{
+      width:100%;
+      border-collapse:collapse;
+      min-width: 0;
+    }
+    .rulesTable td, .rulesTable th{
+      border:1px solid var(--border);
+      padding:10px 10px;
+      vertical-align:top;
+      font-size:14px;
+      background: transparent;
+    }
+    .rulesTable th{
+      background: rgba(47,111,237,.10);
+      position: static;
+    }
+    body.dark .rulesTable th{ background: rgba(106,166,255,.16); }
+    .rulesTable td:first-child{
+      width: 200px;
+      font-weight:700;
+    }
+    .bullets{ margin:0; padding-left: 18px; }
+    .bullets li{ margin: 5px 0; }
+
+    .tinyRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .searchBox{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .searchBox input{
+      flex: 1;
+      min-width: 220px;
+    }
+
     @media (max-width: 980px){
       .grid{ grid-template-columns: 1fr; }
-      h1{ font-size:32px; }
-      .scoreCell{ grid-template-columns: 1fr 80px; }
+      table{ min-width: 760px; }
+    }
+    @media (max-width: 640px){
+      .titleBlock h1{ font-size: 28px; }
+      .pill{ width: 100%; justify-content:space-between; }
+      table{ min-width: 680px; }
+      .scoreCell{ grid-template-columns: 1fr 84px; min-width: 230px; }
+      .rulesTable td:first-child{ width: 150px; }
     }
   </style>
 </head>
+
 <body>
   <div class="topbar"></div>
-  <div class="wrap">
-    <h1>Rummy Points Tracker</h1>
 
-    <div class="panel" style="margin-bottom:14px;">
-      <div class="row">
+  <div class="wrap">
+    <div class="header">
+      <div class="titleBlock">
+        <h1>Rummy Points Tracker</h1>
+        <div class="subtitle">Clean tracker for rounds, totals, actions/points, leaderboard, and rules (works great on phone + computer).</div>
+      </div>
+
+      <div class="toolbar">
         <div class="pill">
-          <div class="muted">mode</div>
-          <button class="btn small" id="darkBtn">dark mode</button>
+          <span class="muted">mode</span>
+          <button class="btn" id="darkBtn">dark</button>
         </div>
 
         <div class="pill">
-          <div class="muted">rounds</div>
+          <span class="muted">rounds</span>
           <select id="roundCount" style="width:auto; min-width:90px;">
             <option value="3">3</option>
             <option value="4">4</option>
@@ -167,92 +394,147 @@
             <option value="6">6</option>
             <option value="7">7</option>
           </select>
-          <button class="btn small" id="applyRoundsBtn">apply</button>
+          <button class="btn" id="applyRoundsBtn">apply</button>
         </div>
 
         <div class="pill">
-          <button class="btn small primary" id="saveBtn">save</button>
-          <button class="btn small" id="loadBtn">load</button>
-          <button class="btn small danger" id="resetBtn">reset</button>
+          <button class="btn primary" id="saveBtn">save</button>
+          <button class="btn" id="loadBtn">load</button>
+          <button class="btn danger" id="resetBtn">reset</button>
         </div>
       </div>
-      <div class="hint">Tip: choose an action for each round; points auto-fill. You can also type points directly.</div>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px;">
+      <div class="tinyRow">
+        <div class="badge">
+          <div>
+            <div class="label">sequence order</div>
+            <div class="value" id="sequenceOrder">A,K,Q,J,10,9,8,7,6,5,4,3,2,A</div>
+          </div>
+        </div>
+
+        <div class="badge">
+          <div>
+            <div class="label">scoring note</div>
+            <div class="value">lowest total points wins</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="searchBox">
+        <input id="playerSearch" type="text" placeholder="Search player name (filters the table)" />
+        <button class="btn" id="clearSearchBtn">clear</button>
+      </div>
+
+      <div class="notice">Tip: choose an action for each round and points auto-fill. You can also type points manually.</div>
       <div id="err" class="error"></div>
     </div>
 
     <div class="grid">
       <div class="panel">
-        <div class="row" style="margin-bottom:10px;">
+        <div class="sectionTitle">
           <div>
-            <div style="font-weight:700; margin-bottom:4px;">Game Chart</div>
-            <div class="muted">Lowest total points wins (rummy style)</div>
+            <div class="name">Game Chart</div>
+            <div class="muted">Enter each player’s points per round, totals update automatically.</div>
           </div>
-          <div class="row">
-            <button class="btn small" id="addPlayerBtn">+ add player</button>
+          <div class="tinyRow">
+            <button class="btn" id="addPlayerBtn">+ add player</button>
           </div>
         </div>
 
-        <div style="overflow:auto; max-height:70vh;">
+        <div class="tableWrap">
           <table id="scoreTable"></table>
         </div>
+
+        <div class="notice">Swipe left/right on phone if the table is wider than the screen.</div>
       </div>
 
-      <div class="panel">
-        <div class="rightTop">
-          <div>
-            <div style="font-weight:700; margin-bottom:4px;">Actions / Points</div>
-            <div class="muted">Edit these if your rules change</div>
+      <div class="rightCol">
+        <div class="panel">
+          <div class="sectionTitle">
+            <div>
+              <div class="name">Actions / Points</div>
+              <div class="muted">Edit these if your rules change.</div>
+            </div>
+            <button class="btn" id="addRuleBtn">+ add rule</button>
           </div>
-          <button class="btn small" id="addRuleBtn">+ add rule</button>
-        </div>
 
-        <div style="margin-top:10px; overflow:auto;">
-          <table class="rulesTable" id="rulesTable"></table>
-        </div>
-
-        <div class="rankBox">
-          <div style="font-weight:700;">Leaderboard</div>
-          <div class="rankRow">
-            <div>
-              <div class="rankLabel">1st place</div>
-              <div class="rankName" id="rank1">—</div>
-            </div>
-            <div class="muted" id="rank1pts">—</div>
-          </div>
-          <div class="rankRow">
-            <div>
-              <div class="rankLabel">2nd place</div>
-              <div class="rankName" id="rank2">—</div>
-            </div>
-            <div class="muted" id="rank2pts">—</div>
-          </div>
-          <div class="rankRow">
-            <div>
-              <div class="rankLabel">3rd place</div>
-              <div class="rankName" id="rank3">—</div>
-            </div>
-            <div class="muted" id="rank3pts">—</div>
+          <div class="tableWrap" style="min-width:0;">
+            <table id="rulesEditTable" style="min-width:0; width:100%; border-collapse:separate; border-spacing:0;"></table>
           </div>
         </div>
 
-        <div class="hint">
-          If someone has 0 rounds filled, they’ll still show with 0 total.
-          If you want “blank totals ignored,” tell me and I’ll tweak it.
+        <div class="panel">
+          <div class="sectionTitle">
+            <div>
+              <div class="name">Leaderboard</div>
+              <div class="muted">Auto-updates based on total points.</div>
+            </div>
+          </div>
+
+          <div class="leaderboard">
+            <div class="rankRow">
+              <div>
+                <div class="rankLabel">1st place</div>
+                <div class="rankName" id="rank1">—</div>
+              </div>
+              <div class="rankPts" id="rank1pts">—</div>
+            </div>
+
+            <div class="rankRow">
+              <div>
+                <div class="rankLabel">2nd place</div>
+                <div class="rankName" id="rank2">—</div>
+              </div>
+              <div class="rankPts" id="rank2pts">—</div>
+            </div>
+
+            <div class="rankRow">
+              <div>
+                <div class="rankLabel">3rd place</div>
+                <div class="rankName" id="rank3">—</div>
+              </div>
+              <div class="rankPts" id="rank3pts">—</div>
+            </div>
+          </div>
+
+          <div class="notice">If you want the leaderboard to ignore players with all blank rounds, tell me and I’ll tweak it.</div>
         </div>
+
+        <details open>
+          <summary>
+            <div class="summaryTitle">
+              <div class="t">Rules / Details</div>
+              <div class="s">Tap to expand/collapse (mobile friendly)</div>
+            </div>
+            <div class="muted">▼</div>
+          </summary>
+          <div class="detailsBody">
+            <table class="rulesTable" id="rulesDetailsTable"></table>
+          </div>
+        </details>
       </div>
     </div>
   </div>
 
   <script>
-    const STORAGE_KEY = "rummy_points_tracker_v1";
+    const STORAGE_KEY = "rummy_points_tracker_v2_pretty";
 
     const err = document.getElementById("err");
     const darkBtn = document.getElementById("darkBtn");
-    const addPlayerBtn = document.getElementById("addPlayerBtn");
-    const scoreTable = document.getElementById("scoreTable");
 
-    const rulesTable = document.getElementById("rulesTable");
+    const scoreTable = document.getElementById("scoreTable");
+    const rulesEditTable = document.getElementById("rulesEditTable");
+
+    const addPlayerBtn = document.getElementById("addPlayerBtn");
     const addRuleBtn = document.getElementById("addRuleBtn");
+
+    const roundCountSelect = document.getElementById("roundCount");
+    const applyRoundsBtn = document.getElementById("applyRoundsBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const loadBtn = document.getElementById("loadBtn");
+    const resetBtn = document.getElementById("resetBtn");
 
     const rank1 = document.getElementById("rank1");
     const rank2 = document.getElementById("rank2");
@@ -261,20 +543,20 @@
     const rank2pts = document.getElementById("rank2pts");
     const rank3pts = document.getElementById("rank3pts");
 
-    const roundCountSelect = document.getElementById("roundCount");
-    const applyRoundsBtn = document.getElementById("applyRoundsBtn");
-    const saveBtn = document.getElementById("saveBtn");
-    const loadBtn = document.getElementById("loadBtn");
-    const resetBtn = document.getElementById("resetBtn");
+    const playerSearch = document.getElementById("playerSearch");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+
+    const rulesDetailsTable = document.getElementById("rulesDetailsTable");
 
     let roundCount = 5;
 
-    // default data (like your screenshot)
+    // default action rules (you can edit in UI)
+    // based on your message: First Drop 10, Middle Drop 40, max 80
     let rules = [
       { action: "Pure Sequence Missing", points: 80 },
       { action: "Unmatched High Cards", points: 20 },
       { action: "Unmatched Number Cards", points: 12 },
-      { action: "First Drop", points: 20 },
+      { action: "First Drop", points: 10 },
       { action: "Middle Drop", points: 40 },
     ];
 
@@ -284,6 +566,58 @@
       { name: "Chacko", rounds: Array(roundCount).fill(null) },
       { name: "Jeevan", rounds: Array(roundCount).fill(null) },
       { name: "Janice", rounds: Array(roundCount).fill(null) },
+    ];
+
+    const RULES_DETAILS = [
+      { category: "Players and Cards", details: ["2-6 players use 2 decks (106 cards), 7+ players use 3 decks (159 cards)."] },
+      { category: "Objective", details: ["Form valid sequences (runs) and sets (trios)."] },
+      { category: "Sequence/Run", details: ["A consecutive set of cards in the same suit (e.g., 5♥, 6♥, 7♥)."] },
+      { category: "Set/Trio", details: [
+        "Must include at least 2 runs: 1 pure sequence (no joker) and 1 additional run.",
+        "Three cards of the same rank but different suits (e.g., 5♠, 5♥, 5♦)."
+      ]},
+      { category: "Wild Cards", details: [
+        "Turned-up joker and printed jokers act as wild cards.",
+        "Wild cards can substitute for any card except in a pure sequence."
+      ]},
+      { category: "Dealing", details: [
+        "13 cards are dealt to each player.",
+        "A card is turned up to determine the wild card.",
+        "Players draw and discard cards to complete their hand."
+      ]},
+      { category: "Valid Declaration", details: [
+        "A hand must include at least 2 runs, with one being a pure sequence.",
+        "Additional combinations (sets or runs) can be made with or without wild cards.",
+        "Combinations cannot overlap."
+      ]},
+      { category: "Packing/Dropping", details: [
+        "Players can drop out instead of playing their turn:",
+        "First Drop: Pay 10 points if dropping before picking a card.",
+        "Middle Drop: Pay 40 points if dropping after picking a card.",
+        "If all players except one drop, the remaining player automatically wins."
+      ]},
+      { category: "Scoring", details: [
+        "Face Cards (A, K, Q, J, 10): 10 points each.",
+        "Number Cards (2-9): Face value.",
+        "Jokers (wild cards): 0 points.",
+        "Cards in valid combinations (runs or sets) do not count for points.",
+        "Maximum points for a losing hand: 80 points."
+      ]},
+      { category: "Hand Rummy", details: [
+        "If a player is dealt 13 valid cards (all runs and sets), they can declare \"Hand Rummy\" on their first turn.",
+        "Other players pay double their unmatched cards' value."
+      ]},
+      { category: "Game Void", details: ["If the stockpile runs out and no one declares, the game is void."] },
+      { category: "Variations", details: [
+        "Stakes are doubled if the turned-up card is a printed joker.",
+        "Some rules treat all Aces as jokers when a printed joker is turned up.",
+        "21-card Rummy is a popular variation with additional rules and bonuses."
+      ]},
+      { category: "Tactics", details: [
+        "Use skill to minimize losses and improve winning chances.",
+        "Decide whether to play or pack based on the initial hand.",
+        "Discard strategically to block opponents or trick them into giving you needed cards."
+      ]},
     ];
 
     function setError(msg){ err.textContent = msg || ""; }
@@ -309,14 +643,25 @@
       return total;
     }
 
+    function escapeHtml(str){
+      return String(str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+    function escapeAttr(str){
+      return escapeHtml(str).replaceAll("\n"," ");
+    }
+
     function buildRulesDropdownOptions(){
-      // include a blank option
       const opts = [`<option value="">(choose action)</option>`]
         .concat(rules.map((r, idx) => `<option value="${idx}">${escapeHtml(r.action)} (${r.points})</option>`));
       return opts.join("");
     }
 
-    function renderRulesTable(){
+    function renderRulesEditTable(){
       const head = `
         <tr>
           <th style="width:70%;">Action</th>
@@ -328,60 +673,86 @@
         <tr>
           <td><input type="text" value="${escapeAttr(r.action)}" data-rule-action="${i}" /></td>
           <td><input type="number" value="${Number(r.points) || 0}" data-rule-points="${i}" /></td>
-          <td><button class="btn small danger" data-del-rule="${i}">x</button></td>
+          <td style="text-align:center;"><button class="btn danger" data-del-rule="${i}" style="padding:8px 10px;">x</button></td>
         </tr>
       `).join("");
 
-      rulesTable.innerHTML = head + rows;
+      rulesEditTable.innerHTML = head + rows;
 
-      // attach events
-      rulesTable.querySelectorAll("[data-rule-action]").forEach(inp => {
+      rulesEditTable.querySelectorAll("[data-rule-action]").forEach(inp => {
         inp.addEventListener("input", () => {
           const i = Number(inp.getAttribute("data-rule-action"));
           rules[i].action = inp.value;
-          renderScoreTable(); // refresh dropdown text
+          renderScoreTable();
         });
       });
 
-      rulesTable.querySelectorAll("[data-rule-points]").forEach(inp => {
+      rulesEditTable.querySelectorAll("[data-rule-points]").forEach(inp => {
         inp.addEventListener("input", () => {
           const i = Number(inp.getAttribute("data-rule-points"));
           rules[i].points = Number(inp.value || 0);
-          renderScoreTable(); // refresh dropdown text
+          renderScoreTable();
         });
       });
 
-      rulesTable.querySelectorAll("[data-del-rule]").forEach(btn => {
+      rulesEditTable.querySelectorAll("[data-del-rule]").forEach(btn => {
         btn.addEventListener("click", () => {
           const i = Number(btn.getAttribute("data-del-rule"));
           rules.splice(i, 1);
-          renderRulesTable();
+          renderRulesEditTable();
           renderScoreTable();
         });
       });
     }
 
+    function renderRulesDetails(){
+      const head = `
+        <tr>
+          <th>Category</th>
+          <th>Rules/Details</th>
+        </tr>
+      `;
+      const rows = RULES_DETAILS.map(r => {
+        const items = r.details.map(d => `<li>${escapeHtml(d)}</li>`).join("");
+        return `
+          <tr>
+            <td>${escapeHtml(r.category)}</td>
+            <td><ul class="bullets">${items}</ul></td>
+          </tr>
+        `;
+      }).join("");
+
+      rulesDetailsTable.innerHTML = head + rows;
+    }
+
     function renderScoreTable(){
       ensureRoundLengths();
+
+      const filter = String(playerSearch.value || "").trim().toLowerCase();
+
       const headRounds = Array.from({length: roundCount}, (_,i) => `<th>Round ${i+1}</th>`).join("");
       const head = `
         <tr>
-          <th style="min-width:170px;">Player Name</th>
+          <th style="min-width:180px;">Player Name</th>
           ${headRounds}
-          <th style="min-width:110px;">Total Points</th>
-          <th style="min-width:80px;"> </th>
+          <th style="min-width:120px;">Total Points</th>
+          <th style="min-width:90px;"> </th>
         </tr>
       `;
 
       const optionsHtml = buildRulesDropdownOptions();
 
-      const rows = players.map((p, pi) => {
+      const visiblePlayers = players
+        .map((p, idx) => ({ p, idx }))
+        .filter(x => !filter || String(x.p.name || "").toLowerCase().includes(filter));
+
+      const rows = visiblePlayers.map(({p, idx: pi}) => {
         const roundCells = Array.from({length: roundCount}, (_,ri) => {
           const val = p.rounds[ri];
           const numVal = (val === null || val === "") ? "" : String(val);
 
           return `
-            <td style="min-width:220px;">
+            <td>
               <div class="scoreCell">
                 <select data-action="${pi}-${ri}">
                   ${optionsHtml}
@@ -399,7 +770,7 @@
             <td><input type="text" value="${escapeAttr(p.name)}" data-player="${pi}" /></td>
             ${roundCells}
             <td class="totalCell">${total}</td>
-            <td><button class="btn small danger" data-del-player="${pi}">x</button></td>
+            <td style="text-align:center;"><button class="btn danger" data-del-player="${pi}" style="padding:8px 10px;">x</button></td>
           </tr>
         `;
       }).join("");
@@ -425,14 +796,12 @@
         });
       });
 
-      // dropdown + points logic
+      // action dropdown sets points
       scoreTable.querySelectorAll("[data-action]").forEach(sel => {
         const key = sel.getAttribute("data-action"); // "pi-ri"
         const [pi, ri] = key.split("-").map(Number);
 
-        // try to auto-select based on matching points (best effort)
-        // (we store only points in rounds for simplicity)
-        sel.value = "";
+        sel.value = ""; // keep simple
 
         sel.addEventListener("change", () => {
           const idx = sel.value === "" ? null : Number(sel.value);
@@ -449,6 +818,7 @@
         });
       });
 
+      // manual points input
       scoreTable.querySelectorAll("[data-points]").forEach(inp => {
         const key = inp.getAttribute("data-points");
         const [pi, ri] = key.split("-").map(Number);
@@ -456,7 +826,6 @@
         inp.addEventListener("input", () => {
           const v = inp.value;
           players[pi].rounds[ri] = (v === "" ? null : Number(v));
-          // we don’t force the dropdown selection here (keeps it simple)
           renderScoreTable();
           updateLeaderboard();
         });
@@ -467,17 +836,16 @@
 
     function updateLeaderboard(){
       const list = players.map(p => ({ name: p.name || "—", total: computeTotal(p) }));
-      // lowest total wins
       list.sort((a,b) => a.total - b.total);
 
       rank1.textContent = list[0] ? list[0].name : "—";
-      rank1pts.textContent = list[0] ? String(list[0].total) : "—";
+      rank1pts.textContent = list[0] ? String(list[0].total) + " pts" : "—";
 
       rank2.textContent = list[1] ? list[1].name : "—";
-      rank2pts.textContent = list[1] ? String(list[1].total) : "—";
+      rank2pts.textContent = list[1] ? String(list[1].total) + " pts" : "—";
 
       rank3.textContent = list[2] ? list[2].name : "—";
-      rank3pts.textContent = list[2] ? String(list[2].total) : "—";
+      rank3pts.textContent = list[2] ? String(list[2].total) + " pts" : "—";
     }
 
     function addPlayer(){
@@ -488,7 +856,7 @@
 
     function addRule(){
       rules.push({ action: "New Rule", points: 0 });
-      renderRulesTable();
+      renderRulesEditTable();
       renderScoreTable();
     }
 
@@ -508,14 +876,17 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw){ setError("nothing saved yet."); return; }
         const payload = JSON.parse(raw);
+
         if (payload.roundCount) roundCount = Number(payload.roundCount) || 5;
         if (Array.isArray(payload.rules)) rules = payload.rules;
         if (Array.isArray(payload.players)) players = payload.players;
 
         roundCountSelect.value = String(roundCount);
         ensureRoundLengths();
-        renderRulesTable();
+
+        renderRulesEditTable();
         renderScoreTable();
+
         setError("loaded.");
         setTimeout(() => setError(""), 900);
       }catch(e){
@@ -525,15 +896,18 @@
 
     function resetAll(){
       localStorage.removeItem(STORAGE_KEY);
+
       roundCount = 5;
       roundCountSelect.value = "5";
+
       rules = [
         { action: "Pure Sequence Missing", points: 80 },
         { action: "Unmatched High Cards", points: 20 },
         { action: "Unmatched Number Cards", points: 12 },
-        { action: "First Drop", points: 20 },
+        { action: "First Drop", points: 10 },
         { action: "Middle Drop", points: 40 },
       ];
+
       players = [
         { name: "Alex", rounds: Array(roundCount).fill(null) },
         { name: "Jacob", rounds: Array(roundCount).fill(null) },
@@ -541,26 +915,21 @@
         { name: "Jeevan", rounds: Array(roundCount).fill(null) },
         { name: "Janice", rounds: Array(roundCount).fill(null) },
       ];
-      renderRulesTable();
+
+      playerSearch.value = "";
+      renderRulesEditTable();
       renderScoreTable();
+
       setError("reset done.");
       setTimeout(() => setError(""), 900);
     }
 
-    function escapeHtml(str){
-      return String(str || "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-    function escapeAttr(str){
-      return escapeHtml(str).replaceAll("\n"," ");
-    }
-
     // events
-    darkBtn.addEventListener("click", () => document.body.classList.toggle("dark"));
+    darkBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      darkBtn.textContent = document.body.classList.contains("dark") ? "light" : "dark";
+    });
+
     addPlayerBtn.addEventListener("click", addPlayer);
     addRuleBtn.addEventListener("click", addRule);
 
@@ -576,9 +945,18 @@
     loadBtn.addEventListener("click", load);
     resetBtn.addEventListener("click", resetAll);
 
+    playerSearch.addEventListener("input", () => renderScoreTable());
+    clearSearchBtn.addEventListener("click", () => {
+      playerSearch.value = "";
+      renderScoreTable();
+    });
+
     // init
     roundCountSelect.value = String(roundCount);
-    renderRulesTable();
+    darkBtn.textContent = "dark";
+
+    renderRulesDetails();
+    renderRulesEditTable();
     renderScoreTable();
   </script>
 </body>
