@@ -205,12 +205,33 @@
     }
 
     @media print {
-  body { background: #fff !important; }
-  .panel { box-shadow: none !important; }
-  .smallRow, .danger, .secondary, .primary { display: none !important; }
-  input { border: none !important; width: 60px !important; }
-  .tableWrap { overflow: visible !important; }
-  table { min-width: 0 !important; }
+  body { background:#fff !important; }
+
+  /* remove shadows */
+  .panel { box-shadow:none !important; }
+
+  /* hide buttons + quick actions section */
+  button { display:none !important; }
+  .smallRow { display:none !important; }
+
+  /* hide the entire quick actions panel */
+  .grid .panel:nth-child(2) {
+    display:none !important;
+  }
+
+  /* clean input appearance */
+  input {
+    border:none !important;
+    width:60px !important;
+  }
+
+  .tableWrap { overflow:visible !important; }
+  table { min-width:0 !important; }
+
+  /* hide rules section if you want it 1 page only */
+  .rulesWrap, .rulesTable {
+    display:none !important;
+  }
 }
   </style>
 </head>
