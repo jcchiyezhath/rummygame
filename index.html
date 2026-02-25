@@ -203,6 +203,15 @@
       flex-wrap:wrap;
       margin-top:10px;
     }
+
+    @media print {
+  body { background: #fff !important; }
+  .panel { box-shadow: none !important; }
+  .smallRow, .danger, .secondary, .primary { display: none !important; }
+  input { border: none !important; width: 60px !important; }
+  .tableWrap { overflow: visible !important; }
+  table { min-width: 0 !important; }
+}
   </style>
 </head>
 
