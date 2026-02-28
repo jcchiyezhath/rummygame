@@ -440,18 +440,24 @@
     return (p.scores || []).reduce((a,b)=>a + Number(b || 0), 0);
   }
 
-  function updateScore(pi, ri, val){
-  players[pi].scores[ri] = Number(val || 0);
+  function updateScore(pi, ri, inputEl){
+  const val = Number(inputEl.value || 0);
+  players[pi].scores[ri] = val;
 
-  // update the table "Total" cell for that row (without re-rendering the whole table)
+  // Recalculate total
   const newTotal = totalPoints(players[pi]);
-  const totalEl = document.getElementById(`rowTotal_${pi}`);
-  if(totalEl) totalEl.textContent = String(newTotal);
 
-  // update top leaderboard/winner
+  // Find the row and update the Total column directly
+  const row = inputEl.closest("tr");
+  const totalCell = row.querySelector("td:nth-last-child(2) b");
+  if(totalCell){
+    totalCell.textContent = newTotal;
+  }
+
+  // Update leaderboard
   renderLeaderboard();
 
-  // persist
+  // Save
   saveState();
 }
 
