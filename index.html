@@ -232,6 +232,43 @@
   display: none !important;
 }
 }
+
+ /* ===== Calculator Modal Styles ===== */
+  .modalOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    z-index:9999;
+  }
+
+  .modalBox{
+    width:min(700px, 100%);
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+    padding:16px;
+  }
+
+  .modalHeader{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .modalClose{
+    background:#eef0f6;
+    border:none;
+    border-radius:10px;
+    padding:8px 10px;
+    cursor:pointer;
+    font-weight:800;
+  }
+
+    
   </style>
 </head>
 
@@ -551,6 +588,42 @@
   normalize();
   render();
 </script>
+<!-- Calculator Modal (hidden by default) -->
+<div id="calcModal" class="modalOverlay" style="display:none;">
+  <div class="modalBox">
+    <div class="modalHeader">
+      <div style="font-weight:800;">Quick Score Calculator</div>
+      <button class="modalClose" onclick="closeCalc()">✖</button>
+    </div>
 
+    <div class="muted" style="margin-top:6px;">
+      Type leftover cards (space or comma separated). Example: A K Q 10 9 5 2 J
+    </div>
+
+    <div style="margin-top:12px; font-weight:700;">Leftover cards</div>
+    <input id="calcCards" type="text" placeholder="A K 10 9 5 3 J" style="width:100%; max-width:520px;" oninput="calcScore()">
+
+    <div style="margin-top:12px; font-weight:700;">Joker rank (0 points)</div>
+    <select id="calcJoker" onchange="calcScore()" style="padding:8px 10px; border-radius:10px; border:1px solid #ccc;">
+      <option value="A">A</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8" selected>8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="J">J</option>
+      <option value="Q">Q</option>
+      <option value="K">K</option>
+    </select>
+
+    <div style="margin-top:14px; font-weight:800; font-size:18px;">
+      Total Points: <span id="calcTotal">0</span>
+    </div>
+  </div>
+</div>
 </body>
 </html>
