@@ -474,7 +474,7 @@
         <tr>
           <td>${escapeHtml(p.name)}</td>
           ${p.scores.map((s,ri)=>`
-            <td><input type="number" value="${Number(s||0)}" oninput="updateScore(${pi},${ri},this.value)"></td>
+           <td><input type="number" value="${Number(s||0)}" oninput="updateScore(${pi},${ri},this)"></td>
           `).join("")}
           <td><b id="rowTotal_${pi}">${total}</b></td>
           <td><button class="danger" onclick="removePlayer(${pi})">X</button></td>
