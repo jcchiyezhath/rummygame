@@ -599,27 +599,27 @@ function closeCalc(){
 function calcScore(){
   const cardsEl = document.getElementById("calcCards");
   const jokerEl = document.getElementById("calcJoker");
-  const outEl  = document.getElementById("calcTotal");
+  const outEl   = document.getElementById("calcTotal");
   if(!cardsEl || !jokerEl || !outEl) return;
 
-  const joker = String(jokerEl.value).toUpperCase();
+  const joker = String(jokerEl.value || "").toUpperCase();
   let raw = String(cardsEl.value || "").toUpperCase();
 
-  // Remove spaces and commas completely
-  raw = raw.replaceAll(",", "").replaceAll(" ", "");
+  // remove spaces/commas safely (works everywhere)
+  raw = raw.replace(/[\s,]+/g, "");
 
-  let tokens = [];
+  // keep only valid characters A,K,Q,J,0-9
+  raw = raw.replace(/[^AKQJ0-9]/g, "");
+
+  const tokens = [];
   let i = 0;
 
   while(i < raw.length){
-    // Handle 10 (two characters)
     if(raw.slice(i, i+2) === "10"){
       tokens.push("10");
       i += 2;
       continue;
     }
-
-    // Single character card
     tokens.push(raw[i]);
     i += 1;
   }
@@ -627,7 +627,6 @@ function calcScore(){
   let total = 0;
 
   for(const t of tokens){
-    if(t === "PJ" || t === "JOKER") continue;
     if(t === joker) continue;
 
     if(t === "A" || t === "K" || t === "Q" || t === "J" || t === "10"){
