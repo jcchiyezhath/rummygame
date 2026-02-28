@@ -440,10 +440,19 @@
     return (p.scores || []).reduce((a,b)=>a + Number(b || 0), 0);
   }
 
-  function updateScore(pi,ri,val){
+  function updateScore(pi, ri, val){
   players[pi].scores[ri] = Number(val || 0);
-  renderLeaderboard();  // updates winner + leaderboard only
-  saveState();          // keeps data after refresh (if you already added this)
+
+  // update the table "Total" cell for that row (without re-rendering the whole table)
+  const newTotal = totalPoints(players[pi]);
+  const totalEl = document.getElementById(`rowTotal_${pi}`);
+  if(totalEl) totalEl.textContent = String(newTotal);
+
+  // update top leaderboard/winner
+  renderLeaderboard();
+
+  // persist
+  saveState();
 }
 
   // ====== RENDER ======
@@ -467,7 +476,7 @@
           ${p.scores.map((s,ri)=>`
             <td><input type="number" value="${Number(s||0)}" oninput="updateScore(${pi},${ri},this.value)"></td>
           `).join("")}
-          <td><b>${total}</b></td>
+          <td><b id="rowTotal_${pi}">${total}</b></td>
           <td><button class="danger" onclick="removePlayer(${pi})">X</button></td>
         </tr>
       `;
