@@ -582,6 +582,56 @@
   window.print();
 }
 
+  // ===== CALCULATOR FUNCTIONS =====
+function openCalc(){
+  const m = document.getElementById("calcModal");
+  if(m) m.style.display = "flex";
+  const inp = document.getElementById("calcCards");
+  if(inp) inp.focus();
+  calcScore();
+}
+
+function closeCalc(){
+  const m = document.getElementById("calcModal");
+  if(m) m.style.display = "none";
+}
+
+function calcScore(){
+  const cardsEl = document.getElementById("calcCards");
+  const jokerEl = document.getElementById("calcJoker");
+  const outEl = document.getElementById("calcTotal");
+
+  if(!cardsEl || !jokerEl || !outEl) return;
+
+  const joker = String(jokerEl.value).toUpperCase();
+  const raw = String(cardsEl.value || "").toUpperCase();
+
+  const tokens = raw
+    .replaceAll(",", " ")
+    .split(/\s+/)
+    .map(t => t.trim())
+    .filter(Boolean);
+
+  let total = 0;
+
+  for(const t of tokens){
+    if(t === "PJ" || t === "JOKER") continue;
+    if(t === joker) continue;
+
+    if(t === "A" || t === "K" || t === "Q" || t === "J" || t === "10"){
+      total += 10;
+      continue;
+    }
+
+    const n = Number(t);
+    if(Number.isFinite(n) && n >= 2 && n <= 9){
+      total += n;
+    }
+  }
+
+  outEl.textContent = String(total);
+}
+
   // ====== INIT ======
   // Load saved data first. If none exists, start empty.
   loadState();
