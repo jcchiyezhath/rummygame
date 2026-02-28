@@ -441,18 +441,11 @@
   }
 
   function updateScore(pi, ri, inputEl){
-  const val = Number(inputEl.value || 0);
-  players[pi].scores[ri] = val;
+  players[pi].scores[ri] = Number(inputEl.value || 0);
 
-  // Recalculate total
-  const newTotal = totalPoints(players[pi]);
-
-  // Find the row and update the Total column directly
-  const row = inputEl.closest("tr");
-  const totalCell = row.querySelector("td:nth-last-child(2) b");
-  if(totalCell){
-    totalCell.textContent = newTotal;
-  }
+  // Update the total using the id you already added
+  const totalEl = document.getElementById(`rowTotal_${pi}`);
+  if (totalEl) totalEl.textContent = String(totalPoints(players[pi]));
 
   // Update leaderboard
   renderLeaderboard();
